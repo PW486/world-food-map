@@ -491,22 +491,28 @@ const App = () => {
       </header>
 
       {/* Zoom Controls */}
-      <div className="position-absolute bottom-0 start-0 m-3 d-flex flex-column gap-2" style={{ zIndex: 10 }}>
+      <div 
+        className="position-absolute start-0 m-3 d-flex flex-column gap-2" 
+        style={{ 
+            zIndex: 10, 
+            bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" 
+        }}
+      >
         <button 
             className="btn btn-white bg-white shadow rounded-circle d-flex align-items-center justify-content-center" 
-            style={{ width: "40px", height: "40px", padding: 0, color: "#1e3a8a" }}
+            style={{ width: "44px", height: "44px", padding: 0, color: "#1e3a8a" }}
             onClick={handleZoomIn} 
             aria-label="Zoom In"
         >
-            <ZoomIn size={20} />
+            <ZoomIn size={22} />
         </button>
         <button 
             className="btn btn-white bg-white shadow rounded-circle d-flex align-items-center justify-content-center" 
-            style={{ width: "40px", height: "40px", padding: 0, color: "#1e3a8a" }}
+            style={{ width: "44px", height: "44px", padding: 0, color: "#1e3a8a" }}
             onClick={handleZoomOut} 
             aria-label="Zoom Out"
         >
-            <ZoomOut size={20} />
+            <ZoomOut size={22} />
         </button>
       </div>
 
