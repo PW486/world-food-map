@@ -495,7 +495,9 @@ const App = () => {
         className="position-absolute start-0 m-3 d-flex flex-column gap-2" 
         style={{ 
             zIndex: 10, 
-            bottom: "calc(env(safe-area-inset-bottom, 0px) + 3rem)" 
+            bottom: width < 600 
+                ? "calc(env(safe-area-inset-bottom, 0px) + 3rem)" 
+                : "1.5rem"
         }}
       >
         <button 
