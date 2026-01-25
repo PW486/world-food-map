@@ -27,10 +27,10 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: cd world-food-map && npm install
+        run: npm install
 
       - name: Build
-        run: cd world-food-map && npm run build
+        run: npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -38,8 +38,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # The default build output folder for Vite is dist
-          path: './world-food-map/dist'
+          # Files are at the root, build output is in dist
+          path: './dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
