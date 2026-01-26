@@ -11,10 +11,10 @@ An interactive, high-performance web application built with React and Vite that 
   - **Europe**: Italy, France, Spain, Germany, UK, Greece, Turkey, Switzerland, Belgium, Netherlands, Sweden, Denmark, Norway, Finland, Estonia, Latvia, Lithuania, Poland, Slovakia, Hungary, Ireland, Czechia, Austria.
   - **Americas & Oceania**: USA, Canada, Australia, New Zealand.
 - **Verified Visuals**: Authentic food images sourced via direct **Wikimedia Commons API** links, ensuring reliable and high-quality loading.
-- **Premium Mobile Experience**: Fully optimized for **iOS Safari** with:
+- **Optimized Mobile Experience**: Fully optimized for **iOS Safari** with:
   - **Dynamic Viewport Height (dvh)** support to prevent UI cutting.
-  - **Black-translucent status bar** integration for an "app-like" immersive feel.
-  - Full **Safe Area (Notch)** compatibility.
+  - **Seamless Status Bar Blending**: The UI naturally integrates with the system status bar and notch area.
+  - Full **Safe Area** compatibility for ergonomic control placement.
 - **Clean Architecture**: Highly modularized data structure with independent country modules for effortless maintenance and scaling.
 
 ## 🛠️ Technology Stack
