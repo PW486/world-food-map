@@ -82,7 +82,7 @@ const App = () => {
   };
 
   return (
-    <div className="font-sans" style={{ width: "100vw", height: "100dvh", overflow: "hidden", position: "fixed", top: 0, left: 0, backgroundColor: "#f0f7ff" }}>
+    <div className="font-sans" style={{ width: "100vw", height: "100dvh", overflow: "hidden", position: "absolute", top: 0, left: 0, backgroundColor: "#f0f7ff", touchAction: "none" }}>
       
       <MapLayer 
         width={width} 

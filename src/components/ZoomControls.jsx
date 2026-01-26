@@ -8,7 +8,7 @@ const ZoomControls = ({ onZoomIn, onZoomOut }) => {
       style={{ 
           zIndex: 10, 
           left: "20px",
-          bottom: "calc(30px + env(safe-area-inset-bottom, 0px))"
+          bottom: "max(20px, calc(40px + env(safe-area-inset-bottom, 0px)))"
       }}
     >
       <button 
