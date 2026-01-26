@@ -7,7 +7,7 @@ const ZoomControls = ({ onZoomIn, onZoomOut }) => {
       className="position-absolute d-flex flex-column gap-2" 
       style={{ 
           zIndex: 10, 
-          left: "20px",
+          right: "20px",
           bottom: "calc(20px + env(safe-area-inset-bottom, 0px))"
       }}
     >
