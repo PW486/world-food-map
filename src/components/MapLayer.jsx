@@ -27,7 +27,7 @@ const MapLayer = ({ width, height, position, handleMoveEnd, handleCountryClick, 
               center={position.coordinates}
               onMoveEnd={handleMoveEnd}
               minZoom={1}
-              maxZoom={64}
+              maxZoom={128}
           >
           <Geographies geography={GEO_URL}>
               {({ geographies }) => (
