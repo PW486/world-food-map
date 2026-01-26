@@ -43,7 +43,7 @@ const App = () => {
         const delta = -e.deltaY * zoomSpeed;
         setPosition(pos => ({
           ...pos,
-          zoom: Math.min(Math.max(pos.zoom + delta, 0.5), 16)
+          zoom: Math.min(Math.max(pos.zoom + delta, 0.5), 24)
         }));
       }
     };
@@ -56,7 +56,7 @@ const App = () => {
   }, []);
 
   const handleZoomIn = () => {
-    if (position.zoom < 16) setPosition(pos => ({ ...pos, zoom: pos.zoom * 1.5 }));
+    if (position.zoom < 24) setPosition(pos => ({ ...pos, zoom: pos.zoom * 1.5 }));
   };
 
   const handleZoomOut = () => {
