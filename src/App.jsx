@@ -39,8 +39,8 @@ const App = () => {
     const handleWheel = (e) => {
       if (e.ctrlKey) {
         e.preventDefault();
-        // Aggressive intensity for super-fast zooming
-        const zoomIntensity = 0.006;
+        // Ultra-fast intensity for high-speed zooming
+        const zoomIntensity = 0.008;
         const factor = Math.exp(-e.deltaY * zoomIntensity);
         setPosition(pos => ({
           ...pos,
