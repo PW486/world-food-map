@@ -39,8 +39,8 @@ const App = () => {
     const handleWheel = (e) => {
       if (e.ctrlKey) {
         e.preventDefault();
-        // Use a multiplier for consistent zoom speed at all levels
-        const zoomIntensity = 0.0015;
+        // Doubled intensity for even faster zooming
+        const zoomIntensity = 0.003;
         const factor = Math.exp(-e.deltaY * zoomIntensity);
         setPosition(pos => ({
           ...pos,
