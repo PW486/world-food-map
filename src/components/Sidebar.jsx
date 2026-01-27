@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { foodData } from "../data/foodData";
+import WikiFoodImage from "./WikiFoodImage";
 
 const Sidebar = ({ selectedCountry, setSelectedCountry, width }) => {
+  const sidebarRef = useRef(null);
+
+  useEffect(() => {
+    if (sidebarRef.current) {
+      sidebarRef.current.scrollTop = 0;
+    }
+  }, [selectedCountry]);
+
   if (!selectedCountry) return null;
 
   return (
     <div 
+      ref={sidebarRef}
       className="position-absolute top-0 end-0 h-100 bg-white shadow-lg overflow-auto" 
       style={{ 
         zIndex: 30, 
@@ -15,7 +25,7 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width }) => {
       }}
     >
         <div className="p-4 pt-0">
-            <div className="sticky-top bg-white py-4 mb-2 shadow-sm" style={{ zIndex: 5, margin: "0 -1.5rem", padding: "1.5rem" }}>
+            <div className="sticky-top bg-white py-4 mb-4 shadow-sm" style={{ zIndex: 5, margin: "0 -1.5rem", padding: "1.5rem" }}>
                 <div className="d-flex align-items-center justify-content-between">
                     <h2 className="h5 fw-bold m-0" style={{ color: "#1e3a8a" }}>
                             <span style={{ color: "#3b82f6" }}>{selectedCountry}</span> Cuisine
@@ -28,14 +38,9 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width }) => {
                 {foodData[selectedCountry].map((food, index) => (
                     <div key={index} className="card border-0 shadow-sm">
                         <div className="position-relative overflow-hidden rounded-top" style={{ height: "160px" }}>
-                            <img 
-                                src={food.image} 
-                                alt={food.name} 
+                            <WikiFoodImage 
+                                foodName={food.name} 
                                 className="w-100 h-100 object-fit-cover"
-                                onError={(e) => {
-                                    e.target.onerror = null; 
-                                    e.target.src = `https://placehold.co/600x400?text=${food.name}`;
-                                }}
                             />
                         </div>
                         <div className="card-body">
