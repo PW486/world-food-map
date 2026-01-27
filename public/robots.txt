@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pw486.github.io/world-food-map/sitemap.xml
