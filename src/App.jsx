@@ -40,6 +40,7 @@ const App = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const searchRef = useRef(null);
+  const inputRef = useRef(null);
 
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem("darkMode");
@@ -85,6 +86,12 @@ const App = () => {
     ).slice(0, 10);
     setSearchResults(filtered);
   }, [searchQuery]);
+
+  useEffect(() => {
+    if (isSearchActive && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isSearchActive]);
 
   useEffect(() => {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
@@ -274,6 +281,7 @@ const App = () => {
                                                     setIsSearchActive(!isSearchActive);
                                                   }}
                                                 />                                      <input
+                                        ref={inputRef}
                                         type="text"
                                         className="search-input shadow-sm"
                                         placeholder={isSearchActive ? "Search country..." : ""}
