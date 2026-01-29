@@ -235,6 +235,7 @@ const App = () => {
         setTooltipContent={setTooltipContent}
         animationMode={animationMode}
         darkMode={darkMode}
+        onMapClick={() => setIsSearchActive(false)}
       />
 
       <Header darkMode={darkMode} />
