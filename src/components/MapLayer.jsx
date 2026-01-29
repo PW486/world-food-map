@@ -1,11 +1,12 @@
 import React from "react";
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
+import { geoCentroid } from "d3-geo";
 import { foodData } from "../data/foodData";
 import { getCountryColor, mapGeoName } from "../utils/countryMapping";
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 
-const MapLayer = ({ width, height, position, handleMoveEnd, handleCountryClick, selectedCountry, setTooltipContent }) => {
+const MapLayer = ({ width, height, position, handleMoveEnd, handleCountryClick, selectedCountry, setTooltipContent, isAnimating }) => {
   const isMobile = width < 600;
   const getScale = () => {
     if (width < 600) return (width / 6.5);
@@ -30,6 +31,7 @@ const MapLayer = ({ width, height, position, handleMoveEnd, handleCountryClick, 
               onMoveEnd={handleMoveEnd}
               minZoom={1}
               maxZoom={128}
+              className={isAnimating ? "map-animating" : ""}
           >
           <Geographies geography={GEO_URL}>
               {({ geographies }) => (
@@ -46,7 +48,10 @@ const MapLayer = ({ width, height, position, handleMoveEnd, handleCountryClick, 
                           geography={geo}
                           onMouseEnter={() => !isMobile && setTooltipContent(geo.properties.name)}
                           onMouseLeave={() => !isMobile && setTooltipContent("")}
-                          onClick={() => handleCountryClick(geo)}
+                          onClick={() => {
+                            const centroid = geoCentroid(geo);
+                            handleCountryClick(geo, centroid);
+                          }}
                           style={{
                           default: {
                               fill: hasData ? countryColor : "#f8fafc",

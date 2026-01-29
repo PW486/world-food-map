@@ -29,5 +29,27 @@
 }
 
 .overflow-auto::-webkit-scrollbar-thumb:hover {
+
   background: #94a3b8;
+
 }
+
+
+
+/* Map Animations */
+
+
+
+.map-animating {
+
+
+
+  transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1);
+
+
+
+}
+
+
+
+

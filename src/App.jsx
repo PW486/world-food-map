@@ -30,6 +30,7 @@ function useWindowSize() {
 const App = () => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [tooltipContent, setTooltipContent] = useState("");
+  const [isAnimating, setIsAnimating] = useState(false);
   const { width, height } = useWindowSize();
   const isMobile = width < 600;
   const [position, setPosition] = useState({ 
@@ -98,11 +99,22 @@ const App = () => {
 
   const handleMoveEnd = (newPosition) => setPosition(newPosition);
 
-  const handleCountryClick = (geo) => {
+  const handleCountryClick = (geo, centroid) => {
     const countryName = mapGeoName(geo.properties.name);
 
-    if (foodData[countryName]) setSelectedCountry(countryName);
-    else setSelectedCountry(null);
+    if (foodData[countryName]) {
+      setSelectedCountry(countryName);
+      if (centroid) {
+        setIsAnimating(true);
+        setPosition({
+          coordinates: centroid,
+          zoom: 4
+        });
+        setTimeout(() => setIsAnimating(false), 800);
+      }
+    } else {
+      setSelectedCountry(null);
+    }
   };
 
   const handleRandomCountry = () => {
@@ -122,6 +134,7 @@ const App = () => {
         handleCountryClick={handleCountryClick} 
         selectedCountry={selectedCountry}
         setTooltipContent={setTooltipContent}
+        isAnimating={isAnimating}
       />
 
       <Header />
