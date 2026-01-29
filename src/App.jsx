@@ -216,87 +216,87 @@ const App = () => {
 
       <Header darkMode={darkMode} />
 
-      {/* Action Buttons - Left Bottom */}
-                  <div 
-                    ref={searchRef}
-                    className="position-absolute bottom-0 start-0 m-4 d-flex flex-column gap-2" 
-                    style={{ zIndex: 10 }}
-                  >              {/* Search Results Dropdown (Appears above input) */}
-              {isSearchActive && searchResults.length > 0 && (
-                <div className="search-results">
-                  {searchResults.map((country) => (
-                    <div 
-                      key={country} 
-                      className="search-item"
-                      onClick={() => handleCountrySelect(country)}
+            {/* Action Buttons - Left Bottom */}
+            <div 
+              ref={searchRef}
+              className="position-absolute bottom-0 start-0 m-4 d-flex flex-column gap-2" 
+              style={{ zIndex: 10 }}
+            >              
+                    {/* Random Country Button */}
+                    <button
+                      onClick={handleRandomCountry}
+                      className="btn shadow-sm d-flex align-items-center justify-content-center"
+                      style={{ 
+                        width: "50px", 
+                        height: "50px", 
+                        borderRadius: "15px", 
+                        backgroundColor: darkMode ? "#333333" : "white", 
+                        color: darkMode ? "#f0f0f0" : "#333333",
+                        border: "none",
+                        fontSize: "1.5rem",
+                        transition: "all 0.3s ease"
+                      }}
+                      title="Explore Random Cuisine"
                     >
-                      {country}
+                      🎲
+                    </button>
+      
+                    {/* Search Results Dropdown (Appears above input) */}
+                    {isSearchActive && searchResults.length > 0 && (
+                      <div className="search-results">
+                        {searchResults.map((country) => (
+                          <div 
+                            key={country} 
+                            className="search-item"
+                            onClick={() => handleCountrySelect(country)}
+                          >
+                            {country}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+            
+                    {/* Search Bar */}
+                    <div className="search-container">
+                      <Search 
+                        size={22} 
+                        className="position-absolute" 
+                        style={{ 
+                          top: "14px", 
+                          left: "14px", 
+                          color: darkMode ? "#aaaaaa" : "#666666",
+                          pointerEvents: "none",
+                          zIndex: 101
+                        }} 
+                      />
+                      <input
+                        type="text"
+                        className={`search-input shadow-sm ${isSearchActive ? "active" : ""}`}
+                        placeholder={isSearchActive ? "Search country..." : ""}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onFocus={() => setIsSearchActive(true)}
+                        style={{ 
+                          backgroundColor: darkMode ? "#333333" : "white",
+                          color: darkMode ? "#f0f0f0" : "#333333"
+                        }}
+                      />
+                      {isSearchActive && searchQuery && (
+                        <X 
+                          size={18} 
+                          className="position-absolute" 
+                          style={{ 
+                            top: "16px", 
+                            right: "15px", 
+                            color: darkMode ? "#aaaaaa" : "#666666",
+                            cursor: "pointer",
+                            zIndex: 101
+                          }} 
+                          onClick={() => setSearchQuery("")}
+                        />
+                      )}
                     </div>
-                  ))}
-                </div>
-              )}
-      
-              {/* Search Bar */}
-              <div className="search-container">
-                <Search 
-                  size={22} 
-                  className="position-absolute" 
-                  style={{ 
-                    top: "14px", 
-                    left: "14px", 
-                    color: darkMode ? "#aaaaaa" : "#666666",
-                    pointerEvents: "none",
-                    zIndex: 101
-                  }} 
-                />
-                <input
-                  type="text"
-                  className={`search-input shadow-sm ${isSearchActive ? "active" : ""}`}
-                  placeholder={isSearchActive ? "Search country..." : ""}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => setIsSearchActive(true)}
-                  style={{ 
-                    backgroundColor: darkMode ? "#333333" : "white",
-                    color: darkMode ? "#f0f0f0" : "#333333"
-                  }}
-                />
-                {isSearchActive && searchQuery && (
-                  <X 
-                    size={18} 
-                    className="position-absolute" 
-                    style={{ 
-                      top: "16px", 
-                      right: "15px", 
-                      color: darkMode ? "#aaaaaa" : "#666666",
-                      cursor: "pointer",
-                      zIndex: 101
-                    }} 
-                    onClick={() => setSearchQuery("")}
-                  />
-                )}
-              </div>
-      
-              {/* Random Country Button */}
-              <button
-                onClick={handleRandomCountry}
-                className="btn shadow-sm d-flex align-items-center justify-content-center"
-                style={{ 
-                  width: "50px", 
-                  height: "50px", 
-                  borderRadius: "15px", 
-                  backgroundColor: darkMode ? "#333333" : "white", 
-                  color: darkMode ? "#f0f0f0" : "#333333",
-                  border: "none",
-                  fontSize: "1.5rem",
-                  transition: "all 0.3s ease"
-                }}
-                title="Explore Random Cuisine"
-              >
-                🎲
-              </button>
-            </div>
-      
+                  </div>      
       <div className="position-absolute bottom-0 end-0 m-4 d-flex flex-column gap-2" style={{ zIndex: 10 }}>
         <button
           onClick={() => setDarkMode(!darkMode)}
