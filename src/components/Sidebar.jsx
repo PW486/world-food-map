@@ -20,7 +20,7 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
       const timer = setTimeout(() => {
         setDisplayCountry(null);
         setIsClosing(false);
-      }, 300); // 0.3s matches animation duration
+      }, 500); // 0.5s matches animation duration
       return () => clearTimeout(timer);
     }
   }, [selectedCountry, displayCountry]);
@@ -44,7 +44,7 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
       style={{ 
         zIndex: 30, 
         width: width < 600 ? "100vw" : "350px", 
-        animation: isClosing ? "slideOutRight 0.3s ease-in forwards" : "slideInRight 0.3s ease-out",
+        animation: isClosing ? "slideOutRight 0.5s ease-in forwards" : "slideInRight 0.5s ease-out",
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
         backgroundColor: darkMode ? "#121212" : "#f1f5f9",
         boxShadow: darkMode ? "-4px 0 15px rgba(0,0,0,0.5)" : "none",
