@@ -90,7 +90,7 @@ const PURPLE = "#9D4EDD";
 
 export const countryColorMapping = {
     "Afghanistan": GREEN, "Albania": BLUE, "Algeria": GREEN, "Andorra": PINK, "Angola": PINK, "Argentina": PINK,
-    "Armenia": ORANGE, "Australia": YELLOW, "Austria": YELLOW, "Azerbaijan": YELLOW, "Bahamas": PURPLE, "Bahrain": BLUE,
+    "Armenia": ORANGE, "Australia": YELLOW, "Austria": YELLOW, "Azerbaijan": PURPLE, "Bahamas": PURPLE, "Bahrain": BLUE,
     "Bangladesh": ORANGE, "Belarus": PURPLE, "Belgium": BLUE, "Belize": GREEN, "Benin": PINK, "Bermuda": ORANGE, "Bhutan": BLUE,
     "Bolivia": YELLOW, "Bosnia and Herz.": GREEN, "Botswana": YELLOW, "Brazil": GREEN, "Brunei": YELLOW, "Bulgaria": PURPLE,
     "Burkina Faso": GREEN, "Burundi": BLUE, "Cambodia": PURPLE, "Cameroon": YELLOW, "Canada": PURPLE, "Cape Verde": ORANGE,
