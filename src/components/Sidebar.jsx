@@ -87,7 +87,7 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
             
             <div className="d-flex flex-column gap-4">
                 {foodData[displayCountry] && foodData[displayCountry].map((food, index) => (
-                    <div key={index} className="card border-0 shadow-sm" style={{ 
+                    <div key={index} className="card border-0" style={{ 
                       backgroundColor: darkMode ? "#1e1e1e" : "#ffffff", 
                       border: darkMode ? "1px solid #2d2d2d" : "1px solid #e2e8f0" 
                     }}>
