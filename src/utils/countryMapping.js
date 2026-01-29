@@ -97,7 +97,7 @@ export const countryColorMapping = {
     "Central African Republic": GREEN, "Chad": PURPLE, "Chile": PURPLE, "China": ORANGE, "Colombia": PURPLE, "Comoros": YELLOW,
     "Republic of the Congo": ORANGE, "Costa Rica": PINK, "Croatia": PINK, "Cuba": PINK, "Cyprus": BLUE, "Czechia": PINK,
     "Denmark": BLUE, "Djibouti": ORANGE, "Dominican Republic": BLUE, "Democratic Republic of the Congo": PURPLE,
-    "East Timor": BLUE, "Ecuador": ORANGE, "Egypt": PURPLE, "El Salvador": BLUE, "Equatorial Guinea": ORANGE,
+    "East Timor": BLUE, "Ecuador": ORANGE, "Egypt": PURPLE, "El Salvador": BLUE, "Equatorial Guinea": BLUE,
     "Eritrea": GREEN, "Estonia": PINK, "Eswatini": BLUE, "Ethiopia": YELLOW, "Fiji": ORANGE, "Finland": GREEN,
     "France": PINK, "Gabon": PINK, "Gambia": GREEN, "Georgia": GREEN, "Germany": ORANGE, "Ghana": YELLOW,
     "Greece": ORANGE, "Greenland": GREEN, "Guatemala": YELLOW, "Guinea": BLUE, "Guinea-Bissau": PINK, "Guyana": BLUE,
