@@ -56,7 +56,7 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
                 zIndex: 5, 
                 margin: "0 -1.5rem", 
                 padding: "1.5rem", 
-                backgroundColor: darkMode ? "#252525" : "#f1f5f9", 
+                backgroundColor: darkMode ? "#252525" : "#ffffff", 
                 boxShadow: darkMode ? "0 4px 6px -1px rgba(0,0,0,0.3)" : "none",
                 transition: "all 0.3s ease" 
             }}>
