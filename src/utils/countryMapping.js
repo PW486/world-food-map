@@ -12,7 +12,6 @@ export const geoNameMap = {
     "Syrian Arab Republic": "Syria",
     "Macedonia": "North Macedonia",
     "Dem. Rep. Congo": "DRC",
-    "Congo, Dem. Rep. of the": "DRC",
     "Republic of the Congo": "Congo",
     "Brunei Darussalam": "Brunei",
     "Central African Rep.": "Central African Republic",
