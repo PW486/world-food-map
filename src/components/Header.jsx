@@ -14,11 +14,11 @@ const Header = ({ darkMode }) => {
       }}
     >
       <div className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden" style={{ width: "40px", height: "40px" }}>
-          <img src={logo} alt="World Food Map Logo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <img src={logo} alt="World Food Map Logo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       </div>
       <div>
-          <h1 className="h6 m-0 fw-bold" style={{ color: darkMode ? "#f0f0f0" : "#333333" }}>World Food Map</h1>
-          <p className="m-0 small" style={{fontSize: '0.8rem', color: darkMode ? "#aaaaaa" : "#666666" }}>Zoom & Click to explore</p>
+        <h1 className="h6 m-0 fw-bold" style={{ color: darkMode ? "#f0f0f0" : "#333333" }}>World Food Map</h1>
+        <p className="m-0 small" style={{ fontSize: '0.8rem', color: darkMode ? "#aaaaaa" : "#666666" }}>Zoom & Click to explore</p>
       </div>
     </header>
   );

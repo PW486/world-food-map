@@ -20,73 +20,73 @@ const MapLayer = ({ width, height, position, handleMoveEnd, handleCountryClick, 
       style={{ zIndex: 0, touchAction: "none" }} 
     >
       <ComposableMap 
-          width={width}
-          height={height}
-          projection="geoMercator" 
-          projectionConfig={{ scale: getScale() }} 
+        width={width}
+        height={height}
+        projection="geoMercator" 
+        projectionConfig={{ scale: getScale() }} 
       >
-          <ZoomableGroup 
-              zoom={position.zoom}
-              center={position.coordinates}
-              onMoveEnd={handleMoveEnd}
-              minZoom={1}
-              maxZoom={128}
-              className={animationMode === "fast" ? "map-animating-fast" : (animationMode === "slow" ? "map-animating-slow" : "")}
-          >
+        <ZoomableGroup 
+          zoom={position.zoom}
+          center={position.coordinates}
+          onMoveEnd={handleMoveEnd}
+          minZoom={1}
+          maxZoom={128}
+          className={animationMode === "fast" ? "map-animating-fast" : (animationMode === "slow" ? "map-animating-slow" : "")}
+        >
           <Geographies geography={GEO_URL}>
-              {({ geographies }) => (
+            {({ geographies }) => (
               <>
-                  {geographies.map((geo) => {
-                      const geoName = mapGeoName(geo.properties.name);
-                      const isSelected = selectedCountry === geoName;
-                      const hasData = !!foodData[geoName];
-                      const countryColor = getCountryColor(geoName);
-                      
-                      return (
-                      <Geography
-                          key={geo.rsmKey}
-                          geography={geo}
-                          onMouseEnter={() => !isMobile && setTooltipContent(geo.properties.name)}
-                          onMouseLeave={() => !isMobile && setTooltipContent("")}
-                          onClick={() => {
-                            const centroid = geoCentroid(geo);
-                            handleCountryClick(geo, centroid);
-                          }}
-                          style={{
-                          default: {
-                              fill: hasData ? countryColor : (darkMode ? "#2d2d2d" : "#f8fafc"),
-                              outline: "none",
-                              stroke: darkMode ? "#444444" : "#666666",
-                              strokeWidth: 0.5,
-                              vectorEffect: "non-scaling-stroke",
-                              opacity: isSelected ? 1 : (hasData ? 0.7 : 1),
-                              transition: "all 0.3s ease"
-                          },
-                          hover: {
-                              fill: hasData ? countryColor : (darkMode ? "#3d3d3d" : "#f1f5f9"),
-                              outline: "none",
-                              stroke: darkMode ? "#555555" : "#666666",
-                              strokeWidth: 0.5,
-                              vectorEffect: "non-scaling-stroke",
-                              opacity: 1,
-                              cursor: hasData ? "pointer" : "default",
-                          },
-                          pressed: {
-                              fill: hasData ? countryColor : (darkMode ? "#1d1d1d" : "#cbd5e1"),
-                              outline: "none",
-                              stroke: darkMode ? "#555555" : "#666666",
-                              strokeWidth: 0.5,
-                              vectorEffect: "non-scaling-stroke",
-                              opacity: 0.8
-                          },
-                          }}
-                      />
-                      );
-                  })}
+                {geographies.map((geo) => {
+                  const geoName = mapGeoName(geo.properties.name);
+                  const isSelected = selectedCountry === geoName;
+                  const hasData = !!foodData[geoName];
+                  const countryColor = getCountryColor(geoName);
+                  
+                  return (
+                    <Geography
+                      key={geo.rsmKey}
+                      geography={geo}
+                      onMouseEnter={() => !isMobile && setTooltipContent(geo.properties.name)}
+                      onMouseLeave={() => !isMobile && setTooltipContent("")}
+                      onClick={() => {
+                        const centroid = geoCentroid(geo);
+                        handleCountryClick(geo, centroid);
+                      }}
+                      style={{
+                        default: {
+                          fill: hasData ? countryColor : (darkMode ? "#2d2d2d" : "#f8fafc"),
+                          outline: "none",
+                          stroke: darkMode ? "#444444" : "#666666",
+                          strokeWidth: 0.5,
+                          vectorEffect: "non-scaling-stroke",
+                          opacity: isSelected ? 1 : (hasData ? 0.7 : 1),
+                          transition: "all 0.3s ease"
+                        },
+                        hover: {
+                          fill: hasData ? countryColor : (darkMode ? "#3d3d3d" : "#f1f5f9"),
+                          outline: "none",
+                          stroke: darkMode ? "#555555" : "#666666",
+                          strokeWidth: 0.5,
+                          vectorEffect: "non-scaling-stroke",
+                          opacity: 1,
+                          cursor: hasData ? "pointer" : "default",
+                        },
+                        pressed: {
+                          fill: hasData ? countryColor : (darkMode ? "#1d1d1d" : "#cbd5e1"),
+                          outline: "none",
+                          stroke: darkMode ? "#555555" : "#666666",
+                          strokeWidth: 0.5,
+                          vectorEffect: "non-scaling-stroke",
+                          opacity: 0.8
+                        },
+                      }}
+                    />
+                  );
+                })}
               </>
-              )}
+            )}
           </Geographies>
-          </ZoomableGroup>
+        </ZoomableGroup>
       </ComposableMap>
     </div>
   );
