@@ -273,7 +273,7 @@ const App = () => {
             style={{ 
               top: "14px", 
               left: "14px", 
-              color: "#666666",
+              color: darkMode ? "white" : "#666666",
               cursor: "pointer",
               zIndex: 101
             }} 
@@ -291,8 +291,8 @@ const App = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsSearchActive(true)}
             style={{ 
-              backgroundColor: "white",
-              color: "#333333"
+              backgroundColor: darkMode ? "#333333" : "white",
+              color: darkMode ? "#f0f0f0" : "#333333"
             }}
           />
           {isSearchActive && searchQuery && (
@@ -302,7 +302,7 @@ const App = () => {
               style={{ 
                 top: "16px", 
                 right: "15px", 
-                color: "#666666",
+                color: darkMode ? "white" : "#666666",
                 cursor: "pointer",
                 zIndex: 101
               }} 
