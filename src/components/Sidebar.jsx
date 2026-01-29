@@ -40,20 +40,26 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
     <div 
       ref={sidebarRef}
       onClick={(e) => e.stopPropagation()}
-      className={`position-absolute top-0 end-0 h-100 shadow-lg overflow-auto ${darkMode ? "bg-dark text-white" : "bg-white text-dark"}`} 
+      className={`position-absolute top-0 end-0 h-100 shadow-lg overflow-auto ${darkMode ? "text-white" : "text-dark"}`} 
       style={{ 
         zIndex: 30, 
         width: width < 600 ? "100vw" : "350px", 
         animation: isClosing ? "slideOutRight 0.3s ease-in forwards" : "slideInRight 0.3s ease-out",
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
-        backgroundColor: darkMode ? "#1a1a1a" : "white",
+        backgroundColor: darkMode ? "#121212" : "white",
         transition: "background-color 0.3s ease"
       }}
     >
         <div className="p-4 pt-0">
-            <div className={`sticky-top py-4 mb-4 shadow-sm ${darkMode ? "bg-dark" : "bg-white"}`} style={{ zIndex: 5, margin: "0 -1.5rem", padding: "1.5rem", backgroundColor: darkMode ? "#1a1a1a" : "white", transition: "background-color 0.3s ease" }}>
+            <div className="sticky-top py-4 mb-4 shadow" style={{ 
+                zIndex: 5, 
+                margin: "0 -1.5rem", 
+                padding: "1.5rem", 
+                backgroundColor: darkMode ? "#252525" : "white", 
+                transition: "all 0.3s ease" 
+            }}>
                 <div className="d-flex align-items-start justify-content-between">
-                    <h2 className="h5 fw-bold m-0" style={{ color: darkMode ? "#f0f0f0" : "#333333", lineHeight: "1.5" }}>
+                    <h2 className="h5 fw-bold m-0" style={{ color: darkMode ? "#e2e8f0" : "#333333", lineHeight: "1.5" }}>
                         {countryCode && (
                             <img 
                                 src={`https://flagcdn.com/w40/${countryCode}.png`} 
@@ -77,7 +83,7 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
             
             <div className="d-flex flex-column gap-4">
                 {foodData[displayCountry] && foodData[displayCountry].map((food, index) => (
-                    <div key={index} className={`card border-0 shadow-sm ${darkMode ? "bg-secondary text-white" : "bg-white text-dark"}`} style={{ backgroundColor: darkMode ? "#2d2d2d" : "white" }}>
+                    <div key={index} className="card border-0 shadow-sm" style={{ backgroundColor: darkMode ? "#1e1e1e" : "white", border: darkMode ? "1px solid #2d2d2d" : "none" }}>
                         <div className="position-relative overflow-hidden rounded-top" style={{ height: "160px" }}>
                             <WikiFoodImage 
                                 foodName={food.name} 
@@ -85,8 +91,8 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
                             />
                         </div>
                         <div className="card-body">
-                            <h6 className="card-title fw-bold" style={{ color: darkMode ? "#f0f0f0" : "#333333" }}>{food.name}</h6>
-                            <p className="card-text small" style={{ color: darkMode ? "#bbbbbb" : "#555555" }}>{food.desc}</p>
+                            <h6 className="card-title fw-bold" style={{ color: darkMode ? "#e2e8f0" : "#333333" }}>{food.name}</h6>
+                            <p className="card-text small" style={{ color: darkMode ? "#94a3b8" : "#555555" }}>{food.desc}</p>
                         </div>
                     </div>
                 ))}
