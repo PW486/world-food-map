@@ -122,17 +122,17 @@ html.dark-mode, body.dark-mode {
 
 /* Dark Mode Overrides */
 .dark-mode-app .search-results {
-  background-color: #333333;
-  color: #f0f0f0;
-  border: 1px solid #444444;
+  background-color: white;
+  color: #333333;
+  border: 1px solid #e2e8f0;
 }
 
 .dark-mode-app .search-item {
-  border-bottom-color: #444444;
+  border-bottom-color: #f1f5f9;
 }
 
 .dark-mode-app .search-item:hover {
-  background-color: #444444;
+  background-color: #f8fafc;
 }
 
 .dark-mode-app .sync-transition {
