@@ -320,7 +320,10 @@ const App = () => {
                 cursor: "pointer",
                 zIndex: 101
               }} 
-              onClick={() => setSearchQuery("")}
+              onClick={() => {
+                setSearchQuery("");
+                if (inputRef.current) inputRef.current.focus();
+              }}
             />
           )}
         </div>
