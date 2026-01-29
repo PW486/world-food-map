@@ -108,14 +108,6 @@ const App = () => {
   }, [isSearchActive]);
 
   useEffect(() => {
-    if (selectedCountry) {
-      setTooltipContent(selectedCountry);
-    } else {
-      setTooltipContent("");
-    }
-  }, [selectedCountry]);
-
-  useEffect(() => {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
     const root = document.documentElement;
     if (darkMode) {
