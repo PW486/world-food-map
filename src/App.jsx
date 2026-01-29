@@ -216,13 +216,12 @@ const App = () => {
 
       <Header darkMode={darkMode} />
 
-            {/* Action Buttons - Left Bottom */}
-            <div 
-              ref={searchRef}
-              className="position-absolute bottom-0 start-0 m-4 d-flex flex-column gap-2" 
-              style={{ zIndex: 10 }}
-            >              
-                    {/* Random Country Button */}
+                  {/* Action Buttons - Left Bottom */}
+                  <div 
+                    ref={searchRef}
+                    className="position-absolute bottom-0 start-0 m-4 d-flex flex-column gap-2" 
+                    style={{ zIndex: 20 }}
+                  >                    {/* Random Country Button */}
                     <button
                       onClick={handleRandomCountry}
                       className="btn shadow-sm d-flex align-items-center justify-content-center"

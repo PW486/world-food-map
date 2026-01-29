@@ -504,6 +504,14 @@
 
 
 
+
+
+
+
+
+
+
+
   .search-input:focus, .search-input.active {
 
 
@@ -512,7 +520,23 @@
 
 
 
-    width: calc(100vw - 40px);
+
+
+
+
+
+
+
+
+    width: calc(75vw);
+
+
+
+
+
+
+
+
 
 
 
@@ -521,6 +545,14 @@
 
 
   }
+
+
+
+
+
+
+
+
 
 
 
