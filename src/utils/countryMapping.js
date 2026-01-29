@@ -114,7 +114,7 @@ export const countryColorMapping = {
     "Palestine": GREEN, "Panama": YELLOW, "Papua New Guinea": PURPLE, "Paraguay": ORANGE, "Peru": BLUE, "Philippines": YELLOW,
     "Poland": YELLOW, "Portugal": GREEN, "Puerto Rico": PURPLE, "Qatar": BLUE, "Romania": BLUE, "Russia": BLUE,
     "Rwanda": GREEN, "Sao Tome and Principe": BLUE, "Saudi Arabia": ORANGE, "Senegal": YELLOW, "Serbia": ORANGE,
-    "Seychelles": ORANGE, "Sierra Leone": PURPLE, "Singapore": PURPLE, "Slovakia": PURPLE, "Slovenia": BLUE,
+    "Seychelles": ORANGE, "Sierra Leone": PURPLE, "Singapore": PURPLE, "Slovakia": PURPLE, "Slovenia": PURPLE,
     "Somalia": PURPLE, "Somaliland": BLUE, "South Africa": PINK, "South Sudan": PINK, "Spain": YELLOW, "Sri Lanka": BLUE,
     "Sudan": ORANGE, "Suriname": YELLOW, "Sweden": YELLOW, "Switzerland": GREEN, "Syria": BLUE, "Taiwan": PURPLE,
     "Tajikistan": BLUE, "Tanzania": PINK, "Thailand": ORANGE, "Togo": GREEN, "Trinidad and Tobago": ORANGE,
