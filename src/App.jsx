@@ -34,7 +34,7 @@ function useWindowSize() {
 const App = () => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [tooltipContent, setTooltipContent] = useState("");
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [animationMode, setAnimationMode] = useState(null);
   const [geographies, setGeographies] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -155,16 +155,16 @@ const App = () => {
 
   const handleZoomIn = () => {
     setIsSearchActive(false);
-    setIsAnimating(true);
+    setAnimationMode("fast");
     if (position.zoom < 128) setPosition(pos => ({ ...pos, zoom: pos.zoom * 1.5 }));
-    setTimeout(() => setIsAnimating(false), 300);
+    setTimeout(() => setAnimationMode(null), 300);
   };
 
   const handleZoomOut = () => {
     setIsSearchActive(false);
-    setIsAnimating(true);
+    setAnimationMode("fast");
     if (position.zoom > 1) setPosition(pos => ({ ...pos, zoom: pos.zoom / 1.5 }));
-    setTimeout(() => setIsAnimating(false), 300);
+    setTimeout(() => setAnimationMode(null), 300);
   };
 
   const handleMoveEnd = (newPosition) => setPosition(newPosition);
@@ -178,12 +178,12 @@ const App = () => {
       const targetGeo = geographies.find(geo => mapGeoName(geo.properties.name) === countryName);
       if (targetGeo) {
         const centroid = geoCentroid(targetGeo);
-        setIsAnimating(true);
+        setAnimationMode("slow");
         setPosition({
           coordinates: centroid,
           zoom: 4
         });
-        setTimeout(() => setIsAnimating(false), 300);
+        setTimeout(() => setAnimationMode(null), 400);
       }
     }
   };
@@ -194,12 +194,12 @@ const App = () => {
     if (foodData[countryName]) {
       setSelectedCountry(countryName);
       if (centroid) {
-        setIsAnimating(true);
+        setAnimationMode("slow");
         setPosition({
           coordinates: centroid,
           zoom: 4
         });
-        setTimeout(() => setIsAnimating(false), 300);
+        setTimeout(() => setAnimationMode(null), 400);
       }
     } else {
       setSelectedCountry(null);
@@ -223,7 +223,7 @@ const App = () => {
         handleCountryClick={handleCountryClick} 
         selectedCountry={selectedCountry}
         setTooltipContent={setTooltipContent}
-        isAnimating={isAnimating}
+        animationMode={animationMode}
         darkMode={darkMode}
       />
 
