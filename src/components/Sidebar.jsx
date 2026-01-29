@@ -40,22 +40,26 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
     <div 
       ref={sidebarRef}
       onClick={(e) => e.stopPropagation()}
-      className={`position-absolute top-0 end-0 h-100 shadow-lg overflow-auto ${darkMode ? "text-white" : "text-dark"}`} 
+      className={`position-absolute top-0 end-0 h-100 overflow-auto ${darkMode ? "text-white" : "text-dark"}`} 
       style={{ 
         zIndex: 30, 
         width: width < 600 ? "100vw" : "350px", 
         animation: isClosing ? "slideOutRight 0.3s ease-in forwards" : "slideInRight 0.3s ease-out",
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
         backgroundColor: darkMode ? "#121212" : "#f8fafc",
-        transition: "background-color 0.3s ease"
+        borderLeft: darkMode ? "none" : "1px solid #e2e8f0",
+        boxShadow: darkMode ? "-4px 0 15px rgba(0,0,0,0.5)" : "none",
+        transition: "all 0.3s ease"
       }}
     >
         <div className="p-4 pt-0">
-            <div className="sticky-top py-4 mb-4 shadow" style={{ 
+            <div className="sticky-top py-4 mb-4" style={{ 
                 zIndex: 5, 
                 margin: "0 -1.5rem", 
                 padding: "1.5rem", 
                 backgroundColor: darkMode ? "#252525" : "#ffffff", 
+                boxShadow: darkMode ? "0 4px 6px -1px rgba(0,0,0,0.3)" : "none",
+                borderBottom: darkMode ? "none" : "1px solid #e2e8f0",
                 transition: "all 0.3s ease" 
             }}>
                 <div className="d-flex align-items-start justify-content-between">
