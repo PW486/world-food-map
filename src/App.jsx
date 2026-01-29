@@ -361,7 +361,18 @@ const App = () => {
       </div>
 
       {!isMobile && tooltipContent && (
-        <div className="position-absolute top-0 start-50 translate-middle-x mt-3 text-white px-3 py-1 rounded-pill shadow-sm opacity-90" style={{ zIndex: 20, backgroundColor: darkMode ? "#444444" : "#333333", pointerEvents: "none" }}>
+        <div 
+          className="position-absolute top-0 start-50 translate-middle-x mt-3 px-3 py-1 shadow-sm" 
+          style={{ 
+            zIndex: 20, 
+            backgroundColor: darkMode ? "#333333" : "white", 
+            color: darkMode ? "#f0f0f0" : "#333333",
+            pointerEvents: "none",
+            transition: "all 0.3s ease",
+            fontWeight: "bold",
+            borderRadius: "12px"
+          }}
+        >
           {tooltipContent}
         </div>
       )}

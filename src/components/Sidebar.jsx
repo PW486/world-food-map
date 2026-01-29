@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { foodData } from "../data/foodData";
 import WikiFoodImage from "./WikiFoodImage";
-import { getCountryColor, getCountryCode } from "../utils/countryMapping";
+import { getCountryCode } from "../utils/countryMapping";
 
 const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
   const sidebarRef = useRef(null);
@@ -16,7 +16,6 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
     }
   }, [selectedCountry]);
 
-  const countryColor = displayCountry ? getCountryColor(displayCountry) : null;
   const countryCode = displayCountry ? getCountryCode(displayCountry) : null;
 
   const handleClose = (e) => {
@@ -36,7 +35,7 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
         transform: selectedCountry ? "translateX(0)" : "translateX(100%)",
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
         backgroundColor: darkMode ? "#121212" : "#f1f5f9",
-        boxShadow: darkMode ? "-4px 0 15px rgba(0,0,0,0.5)" : "none",
+        boxShadow: darkMode ? "-4px 0 15px rgba(0,0,0,0.5)" : "-4px 0 15px rgba(0,0,0,0.08)",
       }}
     >
       <div className="p-4 pt-0">
@@ -45,7 +44,7 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
           margin: "0 -1.5rem", 
           padding: "1.5rem", 
           backgroundColor: darkMode ? "#252525" : "#ffffff", 
-          boxShadow: darkMode ? "0 4px 6px -1px rgba(0,0,0,0.3)" : "none",
+          boxShadow: darkMode ? "0 4px 6px -1px rgba(0,0,0,0.3)" : "0 4px 6px -1px rgba(0,0,0,0.05)",
           transition: "all 0.3s ease" 
         }}>
           <div className="d-flex align-items-start justify-content-between">
@@ -64,7 +63,7 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
                   }}
                 />
               )}
-              <span style={{ color: countryColor }}>{displayCountry}</span>
+              <span>{displayCountry}</span>
               <span> Cuisine</span>
             </h2>
             <button onClick={handleClose} className={`btn ${darkMode ? "btn-close btn-close-white" : "btn-close"} ms-3 flex-shrink-0`} style={{ marginTop: "4px" }}></button>
