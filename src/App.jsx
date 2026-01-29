@@ -33,7 +33,7 @@ const App = () => {
   const { width, height } = useWindowSize();
   const isMobile = width < 600;
   const [position, setPosition] = useState({ 
-    coordinates: isMobile ? [15, 35] : [20, 15], 
+    coordinates: isMobile ? [15, 35] : [15, 15], 
     zoom: isMobile ? 4 : 2 
   });
 
