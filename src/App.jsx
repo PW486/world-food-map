@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Sun, Moon } from "lucide-react";
 import { foodData } from "./data/foodData";
 import Header from "./components/Header";
 import ZoomControls from "./components/ZoomControls";
@@ -31,12 +32,26 @@ const App = () => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [tooltipContent, setTooltipContent] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem("darkMode");
+    if (saved !== null) return JSON.parse(saved);
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
   const { width, height } = useWindowSize();
   const isMobile = width < 600;
   const [position, setPosition] = useState({ 
     coordinates: isMobile ? [15, 35] : [15, 15], 
     zoom: isMobile ? 4 : 2 
   });
+
+  useEffect(() => {
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     const handleWheel = (e) => {
@@ -119,12 +134,12 @@ const App = () => {
 
   const handleRandomCountry = () => {
     const countries = Object.keys(foodData);
-    const randomCountry = countries[Math.floor(Math.random() * countries.length)];
+    const randomCountry = countries[0] === "USA" ? countries[Math.floor(Math.random() * countries.length)] : countries[Math.floor(Math.random() * countries.length)]; // Random selection
     setSelectedCountry(randomCountry);
   };
 
   return (
-    <div className="font-sans" style={{ width: "100%", height: "100dvh", overflow: "hidden", position: "relative", backgroundColor: "#f0f7ff", touchAction: "none" }}>
+    <div className={`font-sans ${darkMode ? "dark-mode-app" : ""}`} style={{ width: "100%", height: "100dvh", overflow: "hidden", position: "relative", backgroundColor: darkMode ? "#1a1a1a" : "#f0f7ff", touchAction: "none", transition: "background-color 0.3s ease" }}>
       
       <MapLayer 
         width={width} 
@@ -135,11 +150,31 @@ const App = () => {
         selectedCountry={selectedCountry}
         setTooltipContent={setTooltipContent}
         isAnimating={isAnimating}
+        darkMode={darkMode}
       />
 
-      <Header />
+      <Header darkMode={darkMode} />
 
-      <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} />
+      <div className="position-absolute bottom-0 end-0 m-4 d-flex flex-column gap-2" style={{ zIndex: 10 }}>
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="btn shadow-sm d-flex align-items-center justify-content-center"
+          style={{ 
+            width: "50px", 
+            height: "50px", 
+            borderRadius: "15px", 
+            backgroundColor: darkMode ? "#333333" : "white", 
+            color: darkMode ? "#FFD93D" : "#333333",
+            border: "none",
+            fontSize: "1.2rem",
+            transition: "all 0.3s ease"
+          }}
+          title={darkMode ? "Light Mode" : "Dark Mode"}
+        >
+          {darkMode ? <Sun size={24} /> : <Moon size={24} />}
+        </button>
+        <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} darkMode={darkMode} />
+      </div>
 
       <button
         onClick={handleRandomCountry}
@@ -149,9 +184,10 @@ const App = () => {
           width: "50px", 
           height: "50px", 
           borderRadius: "15px", 
-          backgroundColor: "white", 
+          backgroundColor: darkMode ? "#333333" : "white", 
           border: "none",
-          fontSize: "1.5rem"
+          fontSize: "1.5rem",
+          transition: "all 0.3s ease"
         }}
         title="Random Country"
       >
@@ -159,12 +195,12 @@ const App = () => {
       </button>
 
       {!isMobile && tooltipContent && (
-        <div className="position-absolute top-0 start-50 translate-middle-x mt-3 text-white px-3 py-1 rounded-pill shadow-sm opacity-90" style={{ zIndex: 20, backgroundColor: "#333333", pointerEvents: "none" }}>
+        <div className="position-absolute top-0 start-50 translate-middle-x mt-3 text-white px-3 py-1 rounded-pill shadow-sm opacity-90" style={{ zIndex: 20, backgroundColor: darkMode ? "#444444" : "#333333", pointerEvents: "none" }}>
             {tooltipContent}
         </div>
       )}
 
-      <Sidebar selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} width={width} />
+      <Sidebar selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} width={width} darkMode={darkMode} />
     </div>
   );
 };

@@ -1,35 +1,38 @@
 import React from "react";
 import { ZoomIn, ZoomOut } from "lucide-react";
 
-const ZoomControls = ({ onZoomIn, onZoomOut }) => {
+const ZoomControls = ({ onZoomIn, onZoomOut, darkMode }) => {
   return (
-    <div 
-      className="position-absolute d-flex flex-column gap-2" 
-      style={{ 
-          zIndex: 10, 
-          right: "20px",
-          bottom: "calc(20px + env(safe-area-inset-bottom, 0px))"
-      }}
-    >
+    <div className="d-flex flex-column gap-2">
       <button 
-          className="btn btn-white bg-white shadow-lg rounded-circle d-flex align-items-center justify-content-center border-0" 
-          style={{ width: "44px", height: "44px", padding: 0, color: "#333333", transition: "transform 0.1s" }}
+          className="btn shadow-lg rounded-circle d-flex align-items-center justify-content-center border-0" 
+          style={{ 
+            width: "50px", 
+            height: "50px", 
+            padding: 0, 
+            backgroundColor: darkMode ? "#333333" : "white",
+            color: darkMode ? "#f0f0f0" : "#333333", 
+            transition: "all 0.3s ease" 
+          }}
           onClick={onZoomIn} 
-          onMouseDown={(e) => e.currentTarget.style.transform = "scale(0.95)"}
-          onMouseUp={(e) => e.currentTarget.style.transform = "scale(1)"}
           aria-label="Zoom In"
       >
-          <ZoomIn size={22} />
+          <ZoomIn size={24} />
       </button>
       <button 
-          className="btn btn-white bg-white shadow-lg rounded-circle d-flex align-items-center justify-content-center border-0" 
-          style={{ width: "44px", height: "44px", padding: 0, color: "#333333", transition: "transform 0.1s" }}
+          className="btn shadow-lg rounded-circle d-flex align-items-center justify-content-center border-0" 
+          style={{ 
+            width: "50px", 
+            height: "50px", 
+            padding: 0, 
+            backgroundColor: darkMode ? "#333333" : "white",
+            color: darkMode ? "#f0f0f0" : "#333333", 
+            transition: "all 0.3s ease" 
+          }}
           onClick={onZoomOut} 
-          onMouseDown={(e) => e.currentTarget.style.transform = "scale(0.95)"}
-          onMouseUp={(e) => e.currentTarget.style.transform = "scale(1)"}
           aria-label="Zoom Out"
       >
-          <ZoomOut size={22} />
+          <ZoomOut size={24} />
       </button>
     </div>
   );

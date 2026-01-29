@@ -54,27 +54,27 @@ const MapLayer = ({ width, height, position, handleMoveEnd, handleCountryClick, 
                           }}
                           style={{
                           default: {
-                              fill: hasData ? countryColor : "#f8fafc",
+                              fill: hasData ? countryColor : (darkMode ? "#2d2d2d" : "#f8fafc"),
                               outline: "none",
-                              stroke: "#666666",
+                              stroke: darkMode ? "#444444" : "#666666",
                               strokeWidth: 0.5,
                               vectorEffect: "non-scaling-stroke",
                               opacity: isSelected ? 1 : (hasData ? 0.7 : 1),
                               transition: "all 0.3s ease"
                           },
                           hover: {
-                              fill: hasData ? countryColor : "#f1f5f9",
+                              fill: hasData ? countryColor : (darkMode ? "#3d3d3d" : "#f1f5f9"),
                               outline: "none",
-                              stroke: "#666666",
+                              stroke: darkMode ? "#555555" : "#666666",
                               strokeWidth: 0.5,
                               vectorEffect: "non-scaling-stroke",
                               opacity: 1,
                               cursor: hasData ? "pointer" : "default",
                           },
                           pressed: {
-                              fill: hasData ? countryColor : "#cbd5e1",
+                              fill: hasData ? countryColor : (darkMode ? "#1d1d1d" : "#cbd5e1"),
                               outline: "none",
-                              stroke: "#666666",
+                              stroke: darkMode ? "#555555" : "#666666",
                               strokeWidth: 0.5,
                               vectorEffect: "non-scaling-stroke",
                               opacity: 0.8
