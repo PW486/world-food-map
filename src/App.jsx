@@ -216,13 +216,12 @@ const App = () => {
 
             <Header darkMode={darkMode} />
       
-            {/* Action Buttons - Left Bottom */}
-            <div 
-              ref={searchRef}
-              className="position-absolute bottom-0 start-0 m-4 d-flex flex-column gap-2" 
-              style={{ zIndex: 100 }}
-            >
-              {/* Search Results Dropdown (Appears above input) */}
+                  {/* Action Buttons - Left Bottom */}
+                  <div 
+                    ref={searchRef}
+                    className="position-absolute bottom-0 start-0 m-4 d-flex flex-column gap-2" 
+                    style={{ zIndex: 10 }}
+                  >              {/* Search Results Dropdown (Appears above input) */}
               {isSearchActive && searchResults.length > 0 && (
                 <div className="search-results">
                   {searchResults.map((country) => (
