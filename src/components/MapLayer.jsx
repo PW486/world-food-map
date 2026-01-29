@@ -6,7 +6,7 @@ import { getCountryColor, mapGeoName } from "../utils/countryMapping";
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 
-const MapLayer = ({ width, height, position, handleMoveEnd, handleCountryClick, selectedCountry, setTooltipContent, isAnimating }) => {
+const MapLayer = ({ width, height, position, handleMoveEnd, handleCountryClick, selectedCountry, setTooltipContent, isAnimating, darkMode }) => {
   const isMobile = width < 600;
   const getScale = () => {
     if (width < 600) return (width / 6.5);
