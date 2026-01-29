@@ -214,9 +214,9 @@ const App = () => {
         darkMode={darkMode}
       />
 
-            <Header darkMode={darkMode} />
-      
-                  {/* Action Buttons - Left Bottom */}
+      <Header darkMode={darkMode} />
+
+      {/* Action Buttons - Left Bottom */}
                   <div 
                     ref={searchRef}
                     className="position-absolute bottom-0 start-0 m-4 d-flex flex-column gap-2" 
@@ -297,9 +297,27 @@ const App = () => {
               </button>
             </div>
       
-            <div className="position-absolute bottom-0 end-0 m-4 d-flex flex-column gap-2" style={{ zIndex: 10 }}>
-      
-      
+      <div className="position-absolute bottom-0 end-0 m-4 d-flex flex-column gap-2" style={{ zIndex: 10 }}>
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="btn shadow-sm d-flex align-items-center justify-content-center"
+          style={{ 
+            width: "50px", 
+            height: "50px", 
+            borderRadius: "15px", 
+            backgroundColor: darkMode ? "#333333" : "white", 
+            color: darkMode ? "#FFD93D" : "#3b82f6",
+            border: "none",
+            fontSize: "1.2rem",
+            transition: "all 0.3s ease"
+          }}
+          title={darkMode ? "Light Mode" : "Dark Mode"}
+        >
+          {darkMode ? <Sun size={24} /> : <Moon size={24} />}
+        </button>
+        <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} darkMode={darkMode} />
+      </div>
+
       {!isMobile && tooltipContent && (
         <div className="position-absolute top-0 start-50 translate-middle-x mt-3 text-white px-3 py-1 rounded-pill shadow-sm opacity-90" style={{ zIndex: 20, backgroundColor: darkMode ? "#444444" : "#333333", pointerEvents: "none" }}>
             {tooltipContent}
