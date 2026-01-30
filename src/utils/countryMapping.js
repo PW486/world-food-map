@@ -24,7 +24,8 @@ export const geoNameMap = {
     "Timor-Leste": "East Timor",
     "Cabo Verde": "Cape Verde",
     "N. Cyprus": "Northern Cyprus",
-    "Macao": "Macau"
+    "Macao": "Macau",
+    "Bosnia and Herz.": "Bosnia and Herzegovina"
 };
 
 export const mapGeoName = (name) => geoNameMap[name] || name;
