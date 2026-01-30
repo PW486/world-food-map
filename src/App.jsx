@@ -266,10 +266,7 @@ const App = () => {
         </button>
 
         {/* Search Bar & Results */}
-        <div 
-          className={`search-container ${isSearchActive ? "active" : ""}`}
-          title={isSearchActive ? "" : "Search"}
-        >
+        <div className={`search-container ${isSearchActive ? "active" : ""}`}>
           {isSearchActive && searchResults.length > 0 && (
             <div className="search-results">
               {searchResults.map((country) => (
@@ -284,22 +281,30 @@ const App = () => {
             </div>
           )}
 
-          <Search 
-            size={22} 
-            className="position-absolute" 
+          <div 
+            className="position-absolute d-flex align-items-center justify-content-center"
             title={isSearchActive ? "Close Search" : "Search"}
             style={{ 
-              top: "14px", 
-              left: "14px", 
-              color: darkMode ? "#f0f0f0" : "#333333",
+              top: 0, 
+              left: 0, 
+              width: "50px", 
+              height: "50px", 
               cursor: "pointer",
-              zIndex: 110
-            }} 
+              zIndex: 120
+            }}
             onClick={(e) => {
               e.stopPropagation();
               setIsSearchActive(!isSearchActive);
             }}
-          />
+          >
+            <Search 
+              size={22} 
+              style={{ 
+                color: darkMode ? "#f0f0f0" : "#333333",
+              }} 
+            />
+          </div>
+
           <input
             ref={inputRef}
             type="text"
@@ -313,24 +318,32 @@ const App = () => {
               color: darkMode ? "#f0f0f0" : "#333333"
             }}
           />
+          
           {isSearchActive && searchQuery && (
-            <X 
-              size={18} 
-              className="position-absolute" 
+            <div 
+              className="position-absolute d-flex align-items-center justify-content-center"
               title="Clear search"
               style={{ 
-                top: "16px", 
-                right: "15px", 
-                color: darkMode ? "#f0f0f0" : "#333333",
+                top: 0, 
+                right: 0, 
+                width: "50px", 
+                height: "50px", 
                 cursor: "pointer",
-                zIndex: 110
-              }} 
+                zIndex: 120
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 setSearchQuery("");
                 if (inputRef.current) inputRef.current.focus();
               }}
-            />
+            >
+              <X 
+                size={18} 
+                style={{ 
+                  color: darkMode ? "#f0f0f0" : "#333333",
+                }} 
+              />
+            </div>
           )}
         </div>
       </div>
