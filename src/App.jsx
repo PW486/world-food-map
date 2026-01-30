@@ -287,13 +287,13 @@ const App = () => {
           <Search 
             size={22} 
             className="position-absolute" 
-            title="Search"
+            title={isSearchActive ? "Close Search" : "Search"}
             style={{ 
               top: "14px", 
               left: "14px", 
               color: darkMode ? "#f0f0f0" : "#333333",
               cursor: "pointer",
-              zIndex: 101
+              zIndex: 110
             }} 
             onClick={(e) => {
               e.stopPropagation();
@@ -323,9 +323,10 @@ const App = () => {
                 right: "15px", 
                 color: darkMode ? "#f0f0f0" : "#333333",
                 cursor: "pointer",
-                zIndex: 101
+                zIndex: 110
               }} 
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 setSearchQuery("");
                 if (inputRef.current) inputRef.current.focus();
               }}
