@@ -13,7 +13,7 @@ const WikiFoodImage = ({ foodName, className }) => {
     const fetchImage = async () => {
       try {
         const searchTerm = encodeURIComponent(foodName);
-        const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrsearch=${searchTerm}&gsrlimit=1&prop=imageinfo&iiprop=url&format=json&origin=*`;
+        const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrsearch=${searchTerm}&gsrlimit=1&prop=imageinfo&iiprop=url&iiurlwidth=500&format=json&origin=*`;
         
         const response = await fetch(url);
         const data = await response.json();
@@ -22,7 +22,8 @@ const WikiFoodImage = ({ foodName, className }) => {
           const pages = Object.values(data.query.pages);
           if (pages.length > 0 && pages[0].imageinfo && pages[0].imageinfo.length > 0) {
             if (isMounted) {
-              setImageUrl(pages[0].imageinfo[0].url);
+              const imageInfo = pages[0].imageinfo[0];
+              setImageUrl(imageInfo.thumburl || imageInfo.url);
             }
           }
         }
