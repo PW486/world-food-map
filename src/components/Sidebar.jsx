@@ -7,6 +7,7 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
   const sidebarRef = useRef(null);
   const [displayCountry, setDisplayCountry] = useState(null);
 
+  // Preserve content during slide-out animation
   useEffect(() => {
     if (selectedCountry) {
       setDisplayCountry(selectedCountry);
@@ -24,31 +25,46 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
     setSelectedCountry(null);
   };
 
+  // --- Style Helpers ---
+  const containerStyle = {
+    zIndex: 30,
+    width: width < 600 ? "100vw" : "400px",
+    transform: selectedCountry ? "translateX(0)" : "translateX(100%)",
+    paddingBottom: "env(safe-area-inset-bottom, 0px)",
+    backgroundColor: darkMode ? "#121212" : "#f1f5f9",
+    boxShadow: darkMode ? "-4px 0 15px rgba(0,0,0,0.5)" : "-4px 0 15px rgba(0,0,0,0.08)",
+  };
+
+  const headerStyle = {
+    zIndex: 5,
+    margin: "0 -1.5rem",
+    padding: "1.5rem",
+    backgroundColor: darkMode ? "#252525" : "#ffffff",
+    boxShadow: darkMode ? "0 4px 6px -1px rgba(0,0,0,0.3)" : "0 4px 6px -1px rgba(0,0,0,0.05)",
+    transition: "all 0.3s ease"
+  };
+
+  const cardStyle = {
+    backgroundColor: darkMode ? "#1e1e1e" : "#ffffff",
+    transition: "all 0.3s ease"
+  };
+
+  const titleColor = darkMode ? "#e2e8f0" : "#1e293b";
+  const descColor = darkMode ? "#94a3b8" : "#475569";
+
   return (
     <div 
       ref={sidebarRef}
       onClick={(e) => e.stopPropagation()}
       className={`position-absolute top-0 end-0 h-100 overflow-auto sync-transition ${darkMode ? "text-white" : "text-dark"}`} 
-      style={{ 
-        zIndex: 30, 
-        width: width < 600 ? "100vw" : "400px", 
-        transform: selectedCountry ? "translateX(0)" : "translateX(100%)",
-        paddingBottom: "env(safe-area-inset-bottom, 0px)",
-        backgroundColor: darkMode ? "#121212" : "#f1f5f9",
-        boxShadow: darkMode ? "-4px 0 15px rgba(0,0,0,0.5)" : "-4px 0 15px rgba(0,0,0,0.08)",
-      }}
+      style={containerStyle}
     >
       <div className="p-4 pt-0">
-        <div className="sticky-top py-4 mb-4" style={{ 
-          zIndex: 5, 
-          margin: "0 -1.5rem", 
-          padding: "1.5rem", 
-          backgroundColor: darkMode ? "#252525" : "#ffffff", 
-          boxShadow: darkMode ? "0 4px 6px -1px rgba(0,0,0,0.3)" : "0 4px 6px -1px rgba(0,0,0,0.05)",
-          transition: "all 0.3s ease" 
-        }}>
+        
+        {/* Sticky Header */}
+        <div className="sticky-top py-4 mb-4" style={headerStyle}>
           <div className="d-flex align-items-start justify-content-between">
-            <h2 className="h5 fw-bold m-0" style={{ color: darkMode ? "#e2e8f0" : "#1e293b", lineHeight: "1.5" }}>
+            <h2 className="h5 fw-bold m-0" style={{ color: titleColor, lineHeight: "1.5" }}>
               {countryCode && (
                 <img 
                   src={`https://flagcdn.com/w40/${countryCode}.png`} 
@@ -71,16 +87,14 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
               className={`btn ${darkMode ? "btn-close btn-close-white" : "btn-close"} ms-3 flex-shrink-0`} 
               style={{ marginTop: "4px" }}
               title="Close"
-            ></button>
+            />
           </div>
         </div>
         
+        {/* Dish List */}
         <div className="d-flex flex-column gap-4">
           {foodData[displayCountry] && foodData[displayCountry].map((food, index) => (
-            <div key={index} className="card border-0" style={{ 
-              backgroundColor: darkMode ? "#1e1e1e" : "#ffffff",
-              transition: "all 0.3s ease"
-            }}>
+            <div key={index} className="card border-0" style={cardStyle}>
               <div className="position-relative overflow-hidden rounded-top" style={{ height: "160px" }}>
                 <WikiFoodImage 
                   foodName={food.name} 
@@ -88,12 +102,17 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
                 />
               </div>
               <div className="card-body">
-                <h6 className="card-title fw-bold" style={{ color: darkMode ? "#e2e8f0" : "#1e293b" }}>{food.name}</h6>
-                <p className="card-text small" style={{ color: darkMode ? "#94a3b8" : "#475569" }}>{food.desc}</p>
+                <h6 className="card-title fw-bold" style={{ color: titleColor }}>
+                  {food.name}
+                </h6>
+                <p className="card-text small" style={{ color: descColor }}>
+                  {food.desc}
+                </p>
               </div>
             </div>
           ))}
         </div>
+
       </div>
     </div>
   );

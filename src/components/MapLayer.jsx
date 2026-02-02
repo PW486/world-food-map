@@ -6,7 +6,9 @@ import { mapGeoName, MAP_COLORS, MANUAL_CENTROIDS, LABEL_MIN_ZOOM, getClimateTyp
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 
-// Extract style logic to keep the component clean
+/**
+ * Calculates dynamic styles for map geographies based on state.
+ */
 const getGeographyStyle = ({ isMobile, isSelected, isHovered, hasData, theme, fillColor }) => {
   const baseStyle = {
     outline: "none",
@@ -15,7 +17,6 @@ const getGeographyStyle = ({ isMobile, isSelected, isHovered, hasData, theme, fi
     transition: "all 0.3s ease",
   };
 
-  // Use the same darken filter for both hover and selected states
   const shouldHighlight = hasData && !isMobile && (isHovered || isSelected);
   const filter = shouldHighlight ? "brightness(0.9)" : "none";
 
@@ -29,8 +30,8 @@ const getGeographyStyle = ({ isMobile, isSelected, isHovered, hasData, theme, fi
     },
     hover: {
       ...baseStyle,
-      fill: fillColor, 
-      filter: hasData && !isMobile ? "brightness(0.9)" : "none", 
+      fill: fillColor,
+      filter: hasData && !isMobile ? "brightness(0.9)" : "none",
       stroke: theme.STROKE,
       opacity: 1,
       cursor: hasData ? "pointer" : "default",
@@ -44,18 +45,24 @@ const getGeographyStyle = ({ isMobile, isSelected, isHovered, hasData, theme, fi
   };
 };
 
-// Helper to determine minimum zoom threshold for a country's label
+/**
+ * Determines when a country label should become visible based on zoom level.
+ * Implements a staggered approach for mobile to prevent clutter.
+ */
 const getLabelVisibilityThreshold = (countryName, isMobile) => {
   const baseMinZoom = LABEL_MIN_ZOOM[countryName] || 4.5;
   if (!isMobile) return baseMinZoom;
 
-  // Tier 1 & 1.5 (Russia, USA, UK, France, Germany, etc.): Always visible at start
+  // Tier 1 & 1.5 (Major Anchors): Always visible at initial zoom (4.0)
+  // Includes: Russia, USA, China, UK, France, Germany, etc.
   if (baseMinZoom <= 1.5) return 4.0;
 
-  // Tier 2+ (Spain, Italy, Poland, etc.): Spread out even faster
-  // Tier 2 (base 2.5) -> Shows at 4.0 + (1.0 * 2.0) = 6.0
-  // Tier 3 (base 3.5) -> Shows at 4.0 + (2.0 * 2.0) = 8.0
-  return 4.0 + (baseMinZoom - 1.5) * 2.0;
+  // Tier 2+ (Secondary): Spread out aggressively as user zooms in
+  // Formula: InitialZoom + (TierOffset * SpreadFactor)
+  // Example: Tier 2 (2.5) -> 4.0 + 1.0 * 2.0 = 6.0
+  // Example: Tier 3 (3.5) -> 4.0 + 2.0 * 2.0 = 8.0
+  const spreadFactor = 2.0;
+  return 4.0 + (baseMinZoom - 1.5) * spreadFactor;
 };
 
 const MapLayer = ({ 
@@ -79,9 +86,22 @@ const MapLayer = ({
   }, [width]);
 
   // Calculate dynamic font size to keep visual size relatively constant but slightly increasing
-  // Using power 0.8 makes visual size proportional to zoom^0.2 (slight growth)
   const baseFontSize = isMobile ? 8.0 : 10.0;
-  const labelFontSize = baseFontSize / Math.pow(position.zoom, 0.8); 
+  const labelFontSize = baseFontSize / Math.pow(position.zoom, 0.8);
+
+  const getLabelStyle = (theme, labelFontSize, darkMode) => ({
+    fontFamily: "system-ui, -apple-system, sans-serif",
+    fill: theme.TEXT,
+    paintOrder: "stroke",
+    stroke: darkMode ? "#000000" : "#ffffff",
+    strokeWidth: labelFontSize / 5,
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    pointerEvents: "auto",
+    cursor: "pointer",
+    fontWeight: 600,
+    opacity: 0.9
+  });
 
   return (
     <div 
@@ -111,24 +131,15 @@ const MapLayer = ({
           <Geographies geography={GEO_URL}>
             {({ geographies }) => (
               <>
+                {/* 1. Render Map Geometries */}
                 {geographies.map((geo) => {
                   const geoName = mapGeoName(geo.properties.name);
                   const isSelected = selectedCountry === geoName;
                   const isHovered = hoveredCountry === geoName;
                   const hasData = !!foodData[geoName];
                   
-                  // Determine climate color
                   const climate = getClimateType(geoName);
-                  const fillColor = hasData ? theme["LAND_" + climate] : theme.LAND_DEFAULT;
-
-                  const geoStyles = getGeographyStyle({
-                    isMobile,
-                    isSelected,
-                    isHovered,
-                    hasData,
-                    theme,
-                    fillColor
-                  });
+                  const fillColor = hasData ? theme[`LAND_${climate}`] : theme.LAND_DEFAULT;
 
                   return (
                     <Geography
@@ -150,58 +161,42 @@ const MapLayer = ({
                         const centroid = geoCentroid(geo);
                         handleCountryClick(geo, centroid);
                       }}
-                      style={geoStyles}
+                      style={getGeographyStyle({
+                        isMobile,
+                        isSelected,
+                        isHovered,
+                        hasData,
+                        theme,
+                        fillColor
+                      })}
                     />
                   );
                 })}
-                {/* Country Labels */}
+
+                {/* 2. Render Country Labels */}
                 {geographies.map((geo) => {
                   const geoName = mapGeoName(geo.properties.name);
-                  const hasData = !!foodData[geoName];
-                  if (!hasData) return null;
+                  if (!foodData[geoName]) return null;
 
-                  // Zoom-based Label Filtering
+                  // Visibility Check
                   const visibilityThreshold = getLabelVisibilityThreshold(geoName, isMobile);
                   if (position.zoom < visibilityThreshold) return null;
 
-                  // Use manual centroid if defined
                   const centroid = MANUAL_CENTROIDS[geoName] || geoCentroid(geo);
                   
                   return (
-                    <Marker key={geo.rsmKey + "-label"} coordinates={centroid}>
+                    <Marker key={`${geo.rsmKey}-label`} coordinates={centroid}>
                       <text
                         dy="0.33em"
                         fontSize={labelFontSize}
                         textAnchor="middle"
-                        onMouseEnter={() => {
-                          if (!isMobile) {
-                            setTooltipContent(geoName);
-                            setHoveredCountry(geoName);
-                          }
-                        }}
-                        onMouseLeave={() => {
-                          if (!isMobile) {
-                            setTooltipContent("");
-                            setHoveredCountry(null);
-                          }
-                        }}
+                        onMouseEnter={() => !isMobile && setHoveredCountry(geoName)}
+                        onMouseLeave={() => !isMobile && setHoveredCountry(null)}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleCountryClick(geo, centroid);
                         }}
-                        style={{
-                          fontFamily: "system-ui, -apple-system, sans-serif",
-                          fill: theme.TEXT,
-                          paintOrder: "stroke",
-                          stroke: darkMode ? "#000000" : "#ffffff", // Halo to separate text from map
-                          strokeWidth: labelFontSize / 5,
-                          strokeLinecap: "round",
-                          strokeLinejoin: "round",
-                          pointerEvents: "auto",
-                          cursor: "pointer",
-                          fontWeight: 600,
-                          opacity: 0.9
-                        }}
+                        style={getLabelStyle(theme, labelFontSize, darkMode)}
                       >
                         {geoName}
                       </text>

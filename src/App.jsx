@@ -55,6 +55,7 @@ const App = () => {
     zoom: isMobile ? 4 : 2 
   });
 
+  // Fetch Geography Data
   useEffect(() => {
     fetch(GEO_URL)
       .then(response => response.json())
@@ -66,7 +67,10 @@ const App = () => {
           });
         }
       });
+  }, []);
 
+  // Event Listeners for Search & Keydown
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setIsSearchActive(false);
@@ -88,6 +92,7 @@ const App = () => {
     };
   }, []);
 
+  // Search Logic
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setSearchResults([]);
@@ -99,6 +104,7 @@ const App = () => {
     setSearchResults(filtered);
   }, [searchQuery]);
 
+  // Focus Input Logic
   useEffect(() => {
     if (isSearchActive && inputRef.current) {
       inputRef.current.focus();
@@ -107,6 +113,7 @@ const App = () => {
     }
   }, [isSearchActive]);
 
+  // Dark Mode Logic
   useEffect(() => {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
     const root = document.documentElement;
@@ -119,6 +126,7 @@ const App = () => {
     }
   }, [darkMode]);
 
+  // Smooth Zoom on Wheel
   useEffect(() => {
     const handleWheel = (e) => {
       if (e.ctrlKey) {
@@ -187,7 +195,24 @@ const App = () => {
     return Math.max(baseMinZoom + 3.0, 5.0);
   };
 
-  const handleCountrySelect = (countryName) => {
+  /**
+   * Shared logic to animate map to a specific country's centroid.
+   * @param {string} countryName 
+   * @param {Array} centroid [long, lat]
+   * @param {boolean} forceZoom If true, enforces the target zoom even if current zoom is higher.
+   */
+  const flyToCountry = (countryName, centroid, forceZoom = false) => {
+    const targetZoom = calculateTargetZoom(countryName);
+
+    setAnimationMode("slow");
+    setPosition(pos => ({
+      coordinates: centroid,
+      zoom: forceZoom ? targetZoom : Math.max(pos.zoom, targetZoom)
+    }));
+    setTimeout(() => setAnimationMode(null), 500);
+  };
+
+  const handleCountrySelect = (countryName, forceZoom = false) => {
     setSelectedCountry(countryName);
     setIsSearchActive(false);
     setSearchQuery("");
@@ -196,14 +221,7 @@ const App = () => {
       const targetGeo = geographies.find(geo => mapGeoName(geo.properties.name) === countryName);
       if (targetGeo) {
         const centroid = geoCentroid(targetGeo);
-        const targetZoom = calculateTargetZoom(countryName);
-
-        setAnimationMode("slow");
-        setPosition(pos => ({
-          coordinates: centroid,
-          zoom: Math.max(pos.zoom, targetZoom)
-        }));
-        setTimeout(() => setAnimationMode(null), 500);
+        flyToCountry(countryName, centroid, forceZoom);
       }
     }
   };
@@ -215,14 +233,7 @@ const App = () => {
     if (foodData[countryName]) {
       setSelectedCountry(countryName);
       if (centroid) {
-        const targetZoom = calculateTargetZoom(countryName);
-
-        setAnimationMode("slow");
-        setPosition(pos => ({
-          coordinates: centroid,
-          zoom: Math.max(pos.zoom, targetZoom)
-        }));
-        setTimeout(() => setAnimationMode(null), 500);
+        flyToCountry(countryName, centroid, false);
       }
     } else {
       setSelectedCountry(null);
@@ -232,12 +243,23 @@ const App = () => {
   const handleRandomCountry = () => {
     const countries = Object.keys(foodData);
     const randomCountryName = countries[Math.floor(Math.random() * countries.length)];
-    handleCountrySelect(randomCountryName);
+    // Pass forceZoom: true for random selection to ensure good visibility
+    handleCountrySelect(randomCountryName, true);
   };
 
   return (
-    <div className={`font-sans ${darkMode ? "dark-mode-app" : ""}`} style={{ width: "100%", height: "100dvh", overflow: "hidden", position: "relative", backgroundColor: darkMode ? "#1a1a1a" : "#f0f7ff", touchAction: "none", transition: "background-color 0.3s ease" }}>
-      
+    <div 
+      className={`font-sans ${darkMode ? "dark-mode-app" : ""}`} 
+      style={{ 
+        width: "100%", 
+        height: "100dvh", 
+        overflow: "hidden", 
+        position: "relative", 
+        backgroundColor: darkMode ? "#1a1a1a" : "#f0f7ff", 
+        touchAction: "none", 
+        transition: "background-color 0.3s ease" 
+      }}
+    >
       <MapLayer 
         width={width} 
         height={height} 
@@ -253,13 +275,12 @@ const App = () => {
 
       <Header darkMode={darkMode} />
 
-      {/* Action Buttons - Left Bottom */}
+      {/* Left Bottom Controls: Search & Random */}
       <div 
         ref={searchRef}
         className="position-absolute bottom-0 start-0 m-4 d-flex flex-column gap-2" 
         style={{ zIndex: 20 }}
       >
-        {/* Random Country Button */}
         <button
           onClick={handleRandomCountry}
           className="btn shadow-sm d-flex align-items-center justify-content-center"
@@ -278,7 +299,6 @@ const App = () => {
           🎲
         </button>
 
-        {/* Search Bar & Results */}
         <div className={`search-container ${isSearchActive ? "active" : ""}`}>
           {isSearchActive && searchResults.length > 0 && (
             <div className="search-results">
@@ -286,7 +306,7 @@ const App = () => {
                 <div 
                   key={country} 
                   className="search-item"
-                  onClick={() => handleCountrySelect(country)}
+                  onClick={() => handleCountrySelect(country, true)}
                 >
                   {country}
                 </div>
@@ -312,9 +332,7 @@ const App = () => {
           >
             <Search 
               size={22} 
-              style={{ 
-                color: darkMode ? "#f0f0f0" : "#333333",
-              }} 
+              style={{ color: darkMode ? "#f0f0f0" : "#333333" }} 
             />
           </div>
 
@@ -350,18 +368,13 @@ const App = () => {
                 if (inputRef.current) inputRef.current.focus();
               }}
             >
-              <X 
-                size={18} 
-                style={{ 
-                  color: darkMode ? "#f0f0f0" : "#333333",
-                }} 
-              />
+              <X size={18} style={{ color: darkMode ? "#f0f0f0" : "#333333" }} />
             </div>
           )}
         </div>
       </div>
 
-      {/* Action Buttons - Right Bottom */}
+      {/* Right Bottom Controls: Dark Mode & Zoom */}
       <div 
         className="position-absolute bottom-0 end-0 m-4 d-flex flex-column gap-2 sync-transition" 
         style={{ 
