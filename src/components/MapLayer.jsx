@@ -53,9 +53,9 @@ const getLabelVisibilityThreshold = (countryName, isMobile) => {
   const baseMinZoom = LABEL_MIN_ZOOM[countryName] || 4.5;
   if (!isMobile) return baseMinZoom;
 
-  // Tier 1 & 1.5 (Major Anchors): Always visible at initial zoom (4.0)
-  // Includes: Russia, USA, China, UK, France, Germany, etc.
-  if (baseMinZoom <= 1.5) return 4.0;
+  // Tier 1 & 1.5 (Major Anchors): Visible even at lower zooms (zoomed out)
+  // Allows visibility down to zoom 2.5 (below initial zoom of 4.0)
+  if (baseMinZoom <= 1.5) return 2.5;
 
   // Tier 2+ (Secondary): Spread out aggressively as user zooms in
   // Formula: InitialZoom + (TierOffset * SpreadFactor)
