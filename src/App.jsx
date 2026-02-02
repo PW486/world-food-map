@@ -12,18 +12,10 @@ import "./App.css";
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 
 function useWindowSize() {
-  const [windowSize, setWindowSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
+  const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
 
   useEffect(() => {
-    function handleResize() {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    }
+    const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -55,12 +47,12 @@ const App = () => {
     zoom: isMobile ? 4 : 2 
   });
 
-  // Fetch Geography Data
+  // Load Map Data
   useEffect(() => {
     fetch(GEO_URL)
-      .then(response => response.json())
+      .then(res => res.json())
       .then(data => {
-        if (data.objects && data.objects.countries) {
+        if (data.objects?.countries) {
           import("topojson-client").then(topojson => {
             const countries = topojson.feature(data, data.objects.countries).features;
             setGeographies(countries);
@@ -69,21 +61,14 @@ const App = () => {
       });
   }, []);
 
-  // Event Listeners for Search & Keydown
+  // Global Event Listeners
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setIsSearchActive(false);
-      }
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) setIsSearchActive(false);
     };
-
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        setSelectedCountry(null);
-        setIsSearchActive(false);
-      }
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") { setSelectedCountry(null); setIsSearchActive(false); }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -94,336 +79,132 @@ const App = () => {
 
   // Search Logic
   useEffect(() => {
-    if (searchQuery.trim() === "") {
-      setSearchResults([]);
-      return;
-    }
-    const filtered = Object.keys(foodData).filter(country =>
-      country.toLowerCase().includes(searchQuery.toLowerCase())
+    if (searchQuery.trim() === "") { setSearchResults([]); return; }
+    const filtered = Object.keys(foodData).filter(c => 
+      c.toLowerCase().includes(searchQuery.toLowerCase())
     ).slice(0, 10);
     setSearchResults(filtered);
   }, [searchQuery]);
 
-  // Focus Input Logic
   useEffect(() => {
-    if (isSearchActive && inputRef.current) {
-      inputRef.current.focus();
-    } else if (!isSearchActive) {
-      setSearchQuery("");
-    }
+    if (isSearchActive) inputRef.current?.focus();
+    else setSearchQuery("");
   }, [isSearchActive]);
 
-  // Dark Mode Logic
+  // Theme Sync
   useEffect(() => {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
-    const root = document.documentElement;
-    if (darkMode) {
-      root.classList.add("dark-mode");
-      document.body.classList.add("dark-mode");
-    } else {
-      root.classList.remove("dark-mode");
-      document.body.classList.remove("dark-mode");
-    }
+    document.documentElement.classList.toggle("dark-mode", darkMode);
+    document.body.classList.toggle("dark-mode", darkMode);
   }, [darkMode]);
 
-  // Smooth Zoom on Wheel
+  // Desktop Scroll Zoom
   useEffect(() => {
     const handleWheel = (e) => {
-      if (e.ctrlKey) {
-        e.preventDefault();
-        const zoomIntensity = 0.01;
-        const factor = Math.exp(-e.deltaY * zoomIntensity);
-        
-        setPosition(pos => {
-          const newZoom = Math.min(Math.max(pos.zoom * factor, 1), 128);
-          if (newZoom === pos.zoom) return pos;
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      const factor = Math.exp(-e.deltaY * 0.01);
+      
+      setPosition(pos => {
+        const newZoom = Math.min(Math.max(pos.zoom * factor, 1), 128);
+        if (newZoom === pos.zoom) return pos;
 
-          const container = document.getElementById("map-container");
-          if (!container) return { ...pos, zoom: newZoom };
+        const container = document.getElementById("map-container");
+        if (!container) return { ...pos, zoom: newZoom };
 
-          const rect = container.getBoundingClientRect();
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-          const mouseX = e.clientX - rect.left;
-          const mouseY = e.clientY - rect.top;
+        const rect = container.getBoundingClientRect();
+        const dx = (e.clientX - rect.left) - rect.width / 2;
+        const dy = (e.clientY - rect.top) - rect.height / 2;
+        const pixelToDegree = ((isMobile ? width / 6.5 : 150) * Math.PI) / 180;
+        const diff = (1 / pos.zoom) - (1 / newZoom);
 
-          const baseScale = width < 600 ? width / 6.5 : 150;
-          const dx = mouseX - centerX;
-          const dy = mouseY - centerY;
-          const pixelToDegree = (baseScale * Math.PI) / 180;
-          const diff = (1 / pos.zoom) - (1 / newZoom);
-          const newLong = pos.coordinates[0] + (dx / pixelToDegree) * diff;
-          const newLat = pos.coordinates[1] - (dy / pixelToDegree) * diff;
-
-          return {
-            coordinates: [newLong, newLat],
-            zoom: newZoom
-          };
-        });
-      }
+        return {
+          coordinates: [pos.coordinates[0] + (dx / pixelToDegree) * diff, pos.coordinates[1] - (dy / pixelToDegree) * diff],
+          zoom: newZoom
+        };
+      });
     };
-
     const container = document.getElementById("map-container");
-    if (container) container.addEventListener("wheel", handleWheel, { passive: false });
-    return () => {
-      if (container) container.removeEventListener("wheel", handleWheel);
-    };
-  }, [width, height]);
+    container?.addEventListener("wheel", handleWheel, { passive: false });
+    return () => container?.removeEventListener("wheel", handleWheel);
+  }, [width, height, isMobile]);
 
   const handleZoomIn = () => {
-    setIsSearchActive(false);
     setAnimationMode("fast");
-    if (position.zoom < 128) setPosition(pos => ({ ...pos, zoom: pos.zoom * 1.5 }));
+    setPosition(pos => ({ ...pos, zoom: Math.min(pos.zoom * 1.5, 128) }));
     setTimeout(() => setAnimationMode(null), 300);
   };
 
   const handleZoomOut = () => {
-    setIsSearchActive(false);
     setAnimationMode("fast");
-    if (position.zoom > 1) setPosition(pos => ({ ...pos, zoom: pos.zoom / 1.5 }));
+    setPosition(pos => ({ ...pos, zoom: Math.max(pos.zoom / 1.5, 1) }));
     setTimeout(() => setAnimationMode(null), 300);
   };
 
-  const handleMoveEnd = (newPosition) => setPosition(newPosition);
-
-  const calculateTargetZoom = (countryName) => {
-    const baseMinZoom = LABEL_MIN_ZOOM[countryName] || 4.5;
+  const flyToCountry = (name, centroid, forceZoom = false) => {
+    const baseMinZoom = LABEL_MIN_ZOOM[name] || 4.5;
+    let targetZoom;
+    
     if (isMobile) {
-      // For very small countries (Tier 5+), zoom in significantly more
-      const additionalZoom = baseMinZoom > 5.5 ? 12.0 : 7.0;
-      const offset = baseMinZoom <= 1.5 ? 4.0 : additionalZoom;
-      return Math.max(baseMinZoom + offset, 9.0);
+      const offset = baseMinZoom > 5.5 ? 12.0 : (baseMinZoom <= 1.5 ? 4.0 : 7.0);
+      targetZoom = Math.max(baseMinZoom + offset, 9.0);
+    } else {
+      targetZoom = Math.max(baseMinZoom + 3.0, 5.0);
     }
-    return Math.max(baseMinZoom + 3.0, 5.0);
-  };
-
-  /**
-   * Shared logic to animate map to a specific country's centroid.
-   * @param {string} countryName 
-   * @param {Array} centroid [long, lat]
-   * @param {boolean} forceZoom If true, enforces the target zoom even if current zoom is higher.
-   */
-  const flyToCountry = (countryName, centroid, forceZoom = false) => {
-    const targetZoom = calculateTargetZoom(countryName);
 
     setAnimationMode("slow");
-    setPosition(pos => ({
-      coordinates: centroid,
-      zoom: forceZoom ? targetZoom : Math.max(pos.zoom, targetZoom)
-    }));
+    setPosition(pos => ({ coordinates: centroid, zoom: forceZoom ? targetZoom : Math.max(pos.zoom, targetZoom) }));
     setTimeout(() => setAnimationMode(null), 500);
   };
 
-  const handleCountrySelect = (countryName, forceZoom = false) => {
-    setSelectedCountry(countryName);
+  const handleCountrySelect = (name, force = false) => {
+    setSelectedCountry(name);
     setIsSearchActive(false);
-    setSearchQuery("");
-
-    if (geographies.length > 0) {
-      const targetGeo = geographies.find(geo => mapGeoName(geo.properties.name) === countryName);
-      if (targetGeo) {
-        const centroid = geoCentroid(targetGeo);
-        flyToCountry(countryName, centroid, forceZoom);
-      }
-    }
+    const targetGeo = geographies.find(g => mapGeoName(g.properties.name) === name);
+    if (targetGeo) flyToCountry(name, geoCentroid(targetGeo), force);
   };
 
   const handleCountryClick = (geo, centroid) => {
-    const countryName = mapGeoName(geo.properties.name);
-    setIsSearchActive(false);
-
-    if (foodData[countryName]) {
-      setSelectedCountry(countryName);
-      if (centroid) {
-        flyToCountry(countryName, centroid, false);
-      }
-    } else {
-      setSelectedCountry(null);
-    }
-  };
-
-  const handleRandomCountry = () => {
-    const countries = Object.keys(foodData);
-    const randomCountryName = countries[Math.floor(Math.random() * countries.length)];
-    // Pass forceZoom: true for random selection to ensure good visibility
-    handleCountrySelect(randomCountryName, true);
+    const name = mapGeoName(geo.properties.name);
+    if (foodData[name]) { setSelectedCountry(name); flyToCountry(name, centroid, false); }
+    else setSelectedCountry(null);
   };
 
   return (
-    <div 
-      className={`font-sans ${darkMode ? "dark-mode-app" : ""}`} 
-      style={{ 
-        width: "100%", 
-        height: "100dvh", 
-        overflow: "hidden", 
-        position: "relative", 
-        backgroundColor: darkMode ? "#1a1a1a" : "#f0f7ff", 
-        touchAction: "none", 
-        transition: "background-color 0.3s ease" 
-      }}
-    >
-      <MapLayer 
-        width={width} 
-        height={height} 
-        position={position} 
-        handleMoveEnd={handleMoveEnd} 
-        handleCountryClick={handleCountryClick} 
-        selectedCountry={selectedCountry}
-        setTooltipContent={setTooltipContent}
-        animationMode={animationMode}
-        darkMode={darkMode}
-        onMapClick={() => setIsSearchActive(false)}
-      />
-
+    <div className={`font-sans ${darkMode ? "dark-mode-app" : ""}`} style={{ width: "100%", height: "100dvh", overflow: "hidden", position: "relative", backgroundColor: darkMode ? "#1a1a1a" : "#f0f7ff", touchAction: "none", transition: "background-color 0.3s ease" }}>
+      <MapLayer width={width} height={height} position={position} handleMoveEnd={p => setPosition(p)} handleCountryClick={handleCountryClick} selectedCountry={selectedCountry} setTooltipContent={setTooltipContent} animationMode={animationMode} darkMode={darkMode} onMapClick={() => setIsSearchActive(false)} />
       <Header darkMode={darkMode} />
 
-      {/* Left Bottom Controls: Search & Random */}
-      <div 
-        ref={searchRef}
-        className="position-absolute bottom-0 start-0 m-4 d-flex flex-column gap-2" 
-        style={{ zIndex: 20 }}
-      >
-        <button
-          onClick={handleRandomCountry}
-          className="btn shadow-sm d-flex align-items-center justify-content-center"
-          style={{ 
-            width: "50px", 
-            height: "50px", 
-            borderRadius: "15px", 
-            backgroundColor: darkMode ? "#333333" : "white", 
-            color: darkMode ? "#f0f0f0" : "#333333",
-            border: "none",
-            fontSize: "1.5rem",
-            transition: "all 0.3s ease"
-          }}
-          title="Explore Random Cuisine"
-        >
-          🎲
-        </button>
-
+      {/* Left Bottom: Search & Random */}
+      <div ref={searchRef} className="position-absolute bottom-0 start-0 m-4 d-flex flex-column gap-2" style={{ zIndex: 20 }}>
+        <button onClick={() => handleCountrySelect(Object.keys(foodData)[Math.floor(Math.random() * Object.keys(foodData).length)], true)} className="btn shadow-sm d-flex align-items-center justify-content-center" style={{ width: "50px", height: "50px", borderRadius: "15px", backgroundColor: darkMode ? "#333333" : "white", color: darkMode ? "#f0f0f0" : "#333333", border: "none", fontSize: "1.5rem" }}>🎲</button>
         <div className={`search-container ${isSearchActive ? "active" : ""}`}>
           {isSearchActive && searchResults.length > 0 && (
             <div className="search-results">
-              {searchResults.map((country) => (
-                <div 
-                  key={country} 
-                  className="search-item"
-                  onClick={() => handleCountrySelect(country, true)}
-                >
-                  {country}
-                </div>
-              ))}
+              {searchResults.map(c => <div key={c} className="search-item" onClick={() => handleCountrySelect(c, true)}>{c}</div>)}
             </div>
           )}
-
-          <div 
-            className="position-absolute d-flex align-items-center justify-content-center"
-            title={isSearchActive ? "Close Search" : "Search"}
-            style={{ 
-              top: 0, 
-              left: 0, 
-              width: "50px", 
-              height: "50px", 
-              cursor: "pointer",
-              zIndex: 120
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsSearchActive(!isSearchActive);
-            }}
-          >
-            <Search 
-              size={22} 
-              style={{ color: darkMode ? "#f0f0f0" : "#333333" }} 
-            />
+          <div className="position-absolute d-flex align-items-center justify-content-center" style={{ top: 0, left: 0, width: "50px", height: "50px", cursor: "pointer", zIndex: 120 }} onClick={() => setIsSearchActive(!isSearchActive)}>
+            <Search size={22} style={{ color: darkMode ? "#f0f0f0" : "#333333" }} />
           </div>
-
-          <input
-            ref={inputRef}
-            type="text"
-            className="search-input shadow-sm"
-            placeholder={isSearchActive ? "Search country..." : ""}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => setIsSearchActive(true)}
-            style={{ 
-              backgroundColor: darkMode ? "#333333" : "white",
-              color: darkMode ? "#f0f0f0" : "#333333"
-            }}
-          />
-          
+          <input ref={inputRef} type="text" className="search-input shadow-sm" placeholder={isSearchActive ? "Search country..." : ""} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} onFocus={() => setIsSearchActive(true)} style={{ backgroundColor: darkMode ? "#333333" : "white", color: darkMode ? "#f0f0f0" : "#333333" }} />
           {isSearchActive && searchQuery && (
-            <div 
-              className="position-absolute d-flex align-items-center justify-content-center"
-              title="Clear Input"
-              style={{ 
-                top: 0, 
-                right: 0, 
-                width: "50px", 
-                height: "50px", 
-                cursor: "pointer",
-                zIndex: 120
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setSearchQuery("");
-                if (inputRef.current) inputRef.current.focus();
-              }}
-            >
+            <div className="position-absolute d-flex align-items-center justify-content-center" style={{ top: 0, right: 0, width: "50px", height: "50px", cursor: "pointer", zIndex: 120 }} onClick={() => setSearchQuery("")}>
               <X size={18} style={{ color: darkMode ? "#f0f0f0" : "#333333" }} />
             </div>
           )}
         </div>
       </div>
 
-      {/* Right Bottom Controls: Dark Mode & Zoom */}
-      <div 
-        className="position-absolute bottom-0 end-0 m-4 d-flex flex-column gap-2 sync-transition" 
-        style={{ 
-          zIndex: 10,
-          transform: (!isMobile && selectedCountry) ? "translateX(-400px)" : "translateX(0)",
-        }}
-      >
-        <button
-          onClick={() => {
-            setDarkMode(!darkMode);
-            setIsSearchActive(false);
-          }}
-          className="btn shadow-sm d-flex align-items-center justify-content-center"
-          style={{ 
-            width: "50px", 
-            height: "50px", 
-            borderRadius: "15px", 
-            backgroundColor: darkMode ? "#333333" : "white", 
-            color: darkMode ? "#FFD93D" : "#3b82f6",
-            border: "none",
-            fontSize: "1.2rem",
-            transition: "all 0.3s ease"
-          }}
-          title={darkMode ? "Light Mode" : "Dark Mode"}
-        >
-          {darkMode ? <Sun size={24} /> : <Moon size={24} />}
-        </button>
+      {/* Right Bottom: Theme & Zoom */}
+      <div className="position-absolute bottom-0 end-0 m-4 d-flex flex-column gap-2 sync-transition" style={{ zIndex: 10, transform: (!isMobile && selectedCountry) ? "translateX(-400px)" : "translateX(0)" }}>
+        <button onClick={() => setDarkMode(!darkMode)} className="btn shadow-sm d-flex align-items-center justify-content-center" style={{ width: "50px", height: "50px", borderRadius: "15px", backgroundColor: darkMode ? "#333333" : "white", color: darkMode ? "#FFD93D" : "#3b82f6", border: "none" }}>{darkMode ? <Sun size={24} /> : <Moon size={24} />}</button>
         <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} darkMode={darkMode} />
       </div>
 
       {!isMobile && tooltipContent && (
-        <div 
-          className="position-absolute top-0 start-50 translate-middle-x mt-3 px-3 py-1 shadow-sm" 
-          style={{ 
-            zIndex: 20, 
-            backgroundColor: darkMode ? "#333333" : "white", 
-            color: darkMode ? "#f0f0f0" : "#333333",
-            pointerEvents: "none",
-            transition: "all 0.3s ease",
-            fontWeight: "bold",
-            borderRadius: "12px"
-          }}
-        >
-          {tooltipContent}
-        </div>
+        <div className="position-absolute top-0 start-50 translate-middle-x mt-3 px-3 py-1 shadow-sm" style={{ zIndex: 20, backgroundColor: darkMode ? "#333333" : "white", color: darkMode ? "#f0f0f0" : "#333333", fontWeight: "bold", borderRadius: "12px" }}>{tooltipContent}</div>
       )}
-
       <Sidebar selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} width={width} darkMode={darkMode} />
     </div>
   );

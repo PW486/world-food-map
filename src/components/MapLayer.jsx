@@ -7,7 +7,7 @@ import { mapGeoName, MAP_COLORS, MANUAL_CENTROIDS, LABEL_MIN_ZOOM, getClimateTyp
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 
 /**
- * Calculates dynamic styles for map geographies based on state.
+ * Geography style generator
  */
 const getGeographyStyle = ({ isMobile, isSelected, isHovered, hasData, theme, fillColor }) => {
   const baseStyle = {
@@ -21,75 +21,48 @@ const getGeographyStyle = ({ isMobile, isSelected, isHovered, hasData, theme, fi
   const filter = shouldHighlight ? "brightness(0.9)" : "none";
 
   return {
-    default: {
-      ...baseStyle,
-      fill: fillColor,
-      stroke: theme.STROKE,
-      filter: filter,
-      opacity: 1,
+    default: { ...baseStyle, fill: fillColor, stroke: theme.STROKE, filter, opacity: 1 },
+    hover: { 
+      ...baseStyle, 
+      fill: fillColor, 
+      filter: hasData && !isMobile ? "brightness(0.9)" : "none", 
+      stroke: theme.STROKE, 
+      opacity: 1, 
+      cursor: hasData ? "pointer" : "default" 
     },
-    hover: {
-      ...baseStyle,
-      fill: fillColor,
-      filter: hasData && !isMobile ? "brightness(0.9)" : "none",
-      stroke: theme.STROKE,
-      opacity: 1,
-      cursor: hasData ? "pointer" : "default",
-    },
-    pressed: {
-      ...baseStyle,
-      fill: fillColor,
-      stroke: theme.STROKE,
-      opacity: 1,
-    },
+    pressed: { ...baseStyle, fill: fillColor, stroke: theme.STROKE, opacity: 1 },
   };
 };
 
 /**
- * Determines when a country label should become visible based on zoom level.
- * Implements a staggered approach for mobile to prevent clutter.
+ * Label visibility logic with staggered tiers for mobile
  */
 const getLabelVisibilityThreshold = (countryName, isMobile) => {
   const baseMinZoom = LABEL_MIN_ZOOM[countryName] || 4.5;
   if (!isMobile) return baseMinZoom;
 
-  // Tier 1 & 1.5 (Major Anchors): Always visible regardless of zoom
-  // Allows visibility at minimum zoom (1.0)
+  // Major anchors (Tier 1 & 1.5) always visible
   if (baseMinZoom <= 1.5) return 1.0;
 
-  // Tier 2+ (Secondary): Spread out aggressively as user zooms in
-  // Formula: InitialZoom + (TierOffset * SpreadFactor)
-  // Example: Tier 2 (2.5) -> 4.0 + 1.0 * 2.0 = 6.0
-  // Example: Tier 3 (3.5) -> 4.0 + 2.0 * 2.0 = 8.0
-  const spreadFactor = 2.0;
-  return 4.0 + (baseMinZoom - 1.5) * spreadFactor;
+  // Tier 2+ spread out linearly
+  return 4.0 + (baseMinZoom - 1.5) * 2.0;
 };
 
 const MapLayer = ({ 
-  width, 
-  height, 
-  position, 
-  handleMoveEnd, 
-  handleCountryClick, 
-  selectedCountry, 
-  setTooltipContent, 
-  animationMode, 
-  darkMode, 
-  onMapClick 
+  width, height, position, handleMoveEnd, handleCountryClick, 
+  selectedCountry, setTooltipContent, animationMode, darkMode, onMapClick 
 }) => {
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const isMobile = width < 600;
   const theme = darkMode ? MAP_COLORS.DARK : MAP_COLORS.LIGHT;
 
-  const scale = useMemo(() => {
-    return width < 600 ? (width / 6.5) : 150;
-  }, [width]);
+  const scale = useMemo(() => (width < 600 ? width / 6.5 : 150), [width]);
 
-  // Calculate dynamic font size to keep visual size relatively constant but slightly increasing
+  // Dynamic font size: visual size grows slightly with zoom (power 0.8)
   const baseFontSize = isMobile ? 8.0 : 10.0;
   const labelFontSize = baseFontSize / Math.pow(position.zoom, 0.8);
 
-  const getLabelStyle = (theme, labelFontSize, darkMode) => ({
+  const labelStyle = {
     fontFamily: "system-ui, -apple-system, sans-serif",
     fill: theme.TEXT,
     paintOrder: "stroke",
@@ -101,25 +74,16 @@ const MapLayer = ({
     cursor: "pointer",
     fontWeight: 600,
     opacity: 0.9
-  });
+  };
 
   return (
     <div 
       id="map-container"
       className="position-absolute top-0 start-0 w-100 h-100" 
-      style={{ 
-        zIndex: 0, 
-        touchAction: "none",
-        backgroundColor: theme.OCEAN 
-      }} 
+      style={{ zIndex: 0, touchAction: "none", backgroundColor: theme.OCEAN }} 
       onClick={onMapClick}
     >
-      <ComposableMap 
-        width={width}
-        height={height}
-        projection="geoMercator" 
-        projectionConfig={{ scale }} 
-      >
+      <ComposableMap width={width} height={height} projection="geoMercator" projectionConfig={{ scale }}>
         <ZoomableGroup 
           zoom={position.zoom}
           center={position.coordinates}
@@ -130,94 +94,65 @@ const MapLayer = ({
         >
           <Geographies geography={GEO_URL}>
             {({ geographies }) => {
-              // Memoize centroids for this set of geographies
+              // Cache centroids to ensure position stability during animations
               const centroids = {};
               geographies.forEach(geo => {
-                const geoName = mapGeoName(geo.properties.name);
-                centroids[geoName] = MANUAL_CENTROIDS[geoName] || geoCentroid(geo);
+                const name = mapGeoName(geo.properties.name);
+                centroids[name] = MANUAL_CENTROIDS[name] || geoCentroid(geo);
               });
 
               return (
                 <>
-                  {/* 1. Render Map Geometries */}
+                  {/* Map Shapes */}
                   {geographies.map((geo) => {
-                    const geoName = mapGeoName(geo.properties.name);
-                    const isSelected = selectedCountry === geoName;
-                    const isHovered = hoveredCountry === geoName;
-                    const hasData = !!foodData[geoName];
-                    
-                    const climate = getClimateType(geoName);
+                    const name = mapGeoName(geo.properties.name);
+                    const climate = getClimateType(name);
+                    const hasData = !!foodData[name];
                     const fillColor = hasData ? theme[`LAND_${climate}`] : theme.LAND_DEFAULT;
 
                     return (
                       <Geography
                         key={geo.rsmKey}
                         geography={geo}
-                        onMouseEnter={() => {
-                          if (!isMobile) {
-                            setTooltipContent(geoName);
-                            setHoveredCountry(geoName);
-                          }
-                        }}
-                        onMouseLeave={() => {
-                          if (!isMobile) {
-                            setTooltipContent("");
-                            setHoveredCountry(null);
-                          }
-                        }}
-                        onClick={() => {
-                          handleCountryClick(geo, centroids[geoName]);
-                        }}
+                        onMouseEnter={() => !isMobile && (setTooltipContent(name), setHoveredCountry(name))}
+                        onMouseLeave={() => !isMobile && (setTooltipContent(""), setHoveredCountry(null))}
+                        onClick={() => handleCountryClick(geo, centroids[name])}
                         style={getGeographyStyle({
-                          isMobile,
-                          isSelected,
-                          isHovered,
-                          hasData,
-                          theme,
-                          fillColor
+                          isMobile, isSelected: selectedCountry === name, 
+                          isHovered: hoveredCountry === name, hasData, theme, fillColor
                         })}
                       />
                     );
                   })}
 
-                  {/* 2. Render Country Labels */}
+                  {/* Labels & Hit Areas */}
                   {geographies.map((geo) => {
-                    const geoName = mapGeoName(geo.properties.name);
-                    if (!foodData[geoName]) return null;
+                    const name = mapGeoName(geo.properties.name);
+                    if (!foodData[name]) return null;
+                    if (position.zoom < getLabelVisibilityThreshold(name, isMobile)) return null;
 
-                    // Visibility Check
-                    const visibilityThreshold = getLabelVisibilityThreshold(geoName, isMobile);
-                    if (position.zoom < visibilityThreshold) return null;
-
-                    const centroid = centroids[geoName];
-                    if (!centroid) return null;
-                    
-                                      return (
-                                        <Marker key={`${geo.rsmKey}-label`} coordinates={centroid}>
-                                          {/* Expanded Hit Area for Mobile */}
-                                          {isMobile && (
-                                            <circle
-                                              r={labelFontSize * 2.5}
-                                              fill="transparent"
-                                              style={{ cursor: "pointer", pointerEvents: "auto" }}
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleCountryClick(geo, centroid);
-                                              }}
-                                            />
-                                          )}
-                                          <text
-                                            dy="0.33em"
-                                            fontSize={labelFontSize}
-                                            textAnchor="middle"                          onMouseEnter={() => !isMobile && setHoveredCountry(geoName)}
+                    const centroid = centroids[name];
+                    return (
+                      <Marker key={`${geo.rsmKey}-label`} coordinates={centroid}>
+                        {/* Invisible expanded hit area for easier mobile tapping */}
+                        {isMobile && (
+                          <circle
+                            r={labelFontSize * 2.5}
+                            fill="transparent"
+                            style={{ cursor: "pointer", pointerEvents: "auto" }}
+                            onClick={(e) => (e.stopPropagation(), handleCountryClick(geo, centroid))}
+                          />
+                        )}
+                        <text
+                          dy="0.33em"
+                          fontSize={labelFontSize}
+                          textAnchor="middle"
+                          onMouseEnter={() => !isMobile && setHoveredCountry(name)}
                           onMouseLeave={() => !isMobile && setHoveredCountry(null)}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCountryClick(geo, centroid);
-                          }}
-                          style={getLabelStyle(theme, labelFontSize, darkMode)}
+                          onClick={(e) => (e.stopPropagation(), handleCountryClick(geo, centroid))}
+                          style={labelStyle}
                         >
-                          {geoName}
+                          {name}
                         </text>
                       </Marker>
                     );
