@@ -147,8 +147,8 @@ const MapLayer = ({
                           dy="0.33em"
                           fontSize={labelFontSize}
                           textAnchor="middle"
-                          onMouseEnter={() => !isMobile && setHoveredCountry(name)}
-                          onMouseLeave={() => !isMobile && setHoveredCountry(null)}
+                          onMouseEnter={() => !isMobile && (setTooltipContent(name), setHoveredCountry(name))}
+                          onMouseLeave={() => !isMobile && (setTooltipContent(""), setHoveredCountry(null))}
                           onClick={(e) => (e.stopPropagation(), handleCountryClick(geo, centroid))}
                           style={labelStyle}
                         >

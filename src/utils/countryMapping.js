@@ -80,7 +80,7 @@ export const MAP_COLORS = {
         TEXT: "#374151"
     },
     DARK: {
-        OCEAN: "#1a1c2c",
+        OCEAN: "#121212",
         LAND_DEFAULT: "#242424",
         LAND_TEMPERATE: "#1b3a20",
         LAND_DESERT: "#4a3728",
