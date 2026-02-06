@@ -146,6 +146,7 @@ const MapLayer = ({
                         <text
                           fontSize={labelFontSize}
                           textAnchor="middle"
+                          dominantBaseline="central"
                           onMouseEnter={() => !isMobile && (setTooltipContent(name), setHoveredCountry(name))}
                           onMouseLeave={() => !isMobile && (setTooltipContent(""), setHoveredCountry(null))}
                           onClick={(e) => (e.stopPropagation(), handleCountryClick(geo, centroid))}
@@ -156,14 +157,18 @@ const MapLayer = ({
                             const isMultiLine = words.length > 1 && (name.length > 15 || words.length > 2);
                             
                             if (!isMultiLine) {
-                              return <tspan x="0" dy={labelFontSize * 0.35}>{name}</tspan>;
+                              return <tspan x="0" y="0">{name}</tspan>;
                             }
+
+                            const lineHeight = labelFontSize * 1.0;
+                            const totalHeight = (words.length - 1) * lineHeight;
+                            const startY = -totalHeight / 2;
 
                             return words.map((word, i) => (
                               <tspan 
                                 key={i} 
                                 x="0" 
-                                dy={i === 0 ? (0.35 - (words.length - 1) * 0.5) * labelFontSize : 1.0 * labelFontSize}
+                                y={startY + (i * lineHeight)}
                               >
                                 {word}
                               </tspan>
