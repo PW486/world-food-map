@@ -6,6 +6,10 @@ import { getCountryCode } from "../utils/countryMapping";
 const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
   const sidebarRef = useRef(null);
   const [displayCountry, setDisplayCountry] = useState(null);
+  
+  // Use height to determine landscape mobile state
+  const isLandscape = width > 500 && window.innerHeight < 500;
+  const sidebarWidth = width < 600 ? "100vw" : (isLandscape ? "450px" : "400px");
 
   // Preserve content during slide-out animation
   useEffect(() => {
@@ -28,7 +32,7 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
   // --- Style Helpers ---
   const containerStyle = {
     zIndex: 30,
-    width: width < 600 ? "100vw" : "400px",
+    width: sidebarWidth,
     transform: selectedCountry ? "translateX(0)" : "translateX(100%)",
     paddingLeft: width < 600 ? "env(safe-area-inset-left, 0px)" : "0px",
     paddingRight: "env(safe-area-inset-right, 0px)",
@@ -61,10 +65,10 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
       className={`position-absolute top-0 end-0 h-100 overflow-auto sync-transition ${darkMode ? "text-white" : "text-dark"}`} 
       style={containerStyle}
     >
-      <div className="p-4 pt-0">
+      <div className={isLandscape ? "p-3 pt-0" : "p-4 pt-0"}>
         
         {/* Sticky Header */}
-        <div className="sticky-top py-4 mb-4" style={headerStyle}>
+        <div className={`sticky-top ${isLandscape ? "py-3 mb-3" : "py-3 mb-3"}`} style={headerStyle}>
           <div className="d-flex align-items-start justify-content-between">
             <h2 className="h5 fw-bold m-0" style={{ color: titleColor, lineHeight: "1.5" }}>
               {countryCode && (
@@ -94,16 +98,16 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
         </div>
         
         {/* Dish List */}
-        <div className="d-flex flex-column gap-4">
+        <div className={`d-flex flex-column ${isLandscape ? "gap-3" : "gap-4"}`}>
           {foodData[displayCountry] && foodData[displayCountry].map((food, index) => (
             <div key={index} className="card border-0" style={cardStyle}>
-              <div className="position-relative overflow-hidden rounded-top" style={{ height: "160px" }}>
+              <div className="position-relative overflow-hidden rounded-top" style={{ height: isLandscape ? "140px" : "160px" }}>
                 <WikiFoodImage 
                   foodName={food.name} 
                   className="w-100 h-100 object-fit-cover"
                 />
               </div>
-              <div className="card-body">
+              <div className={`card-body ${isLandscape ? "p-3" : ""}`}>
                 <h6 className="card-title fw-bold" style={{ color: titleColor }}>
                   {food.name}
                 </h6>

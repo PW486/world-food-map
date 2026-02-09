@@ -41,6 +41,11 @@ const App = () => {
 
   const { width, height } = useWindowSize();
   const isMobile = width < 600;
+  const isLandscape = width > height && height < 500;
+  
+  const sidebarWidth = isMobile ? width : (isLandscape ? 450 : 400);
+  const baseMargin = isLandscape ? "1rem" : "1.5rem";
+
   const [position, setPosition] = useState({ 
     coordinates: isMobile ? [15, 35] : [15, 15], 
     zoom: isMobile ? 4 : 2 
@@ -278,8 +283,8 @@ const App = () => {
         className="position-absolute d-flex flex-column gap-2" 
         style={{ 
           zIndex: 20,
-          left: "calc(1.5rem + env(safe-area-inset-left, 0px))",
-          bottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))"
+          left: `calc(${baseMargin} + env(safe-area-inset-left, 0px))`,
+          bottom: `calc(${isLandscape ? "0.75rem" : baseMargin} + env(safe-area-inset-bottom, 0px))`
         }}
       >
         <button onClick={() => handleCountrySelect(Object.keys(foodData)[Math.floor(Math.random() * Object.keys(foodData).length)], true)} className="btn shadow-sm d-flex align-items-center justify-content-center" style={{ width: "50px", height: "50px", borderRadius: "15px", backgroundColor: darkMode ? "#333333" : "white", color: darkMode ? "#f0f0f0" : "#333333", border: "none", fontSize: "1.5rem" }}>🎲</button>
@@ -306,9 +311,9 @@ const App = () => {
         className="position-absolute d-flex flex-column gap-2 sync-transition" 
         style={{ 
           zIndex: 10, 
-          right: "calc(1.5rem + env(safe-area-inset-right, 0px))",
-          bottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))",
-          transform: (!isMobile && selectedCountry) ? "translateX(-400px)" : "translateX(0)" 
+          right: `calc(${baseMargin} + env(safe-area-inset-right, 0px))`,
+          bottom: `calc(${isLandscape ? "0.75rem" : baseMargin} + env(safe-area-inset-bottom, 0px))`,
+          transform: (!isMobile && selectedCountry) ? `translateX(-${sidebarWidth}px)` : "translateX(0)" 
         }}
       >
         <button onClick={() => setDarkMode(!darkMode)} className="btn shadow-sm d-flex align-items-center justify-content-center" style={{ width: "50px", height: "50px", borderRadius: "15px", backgroundColor: darkMode ? "#333333" : "white", color: darkMode ? "#FFD93D" : "#3b82f6", border: "none" }}>{darkMode ? <Sun size={24} /> : <Moon size={24} />}</button>
