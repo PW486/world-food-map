@@ -30,6 +30,7 @@ const Sidebar = ({ selectedCountry, setSelectedCountry, width, darkMode }) => {
     zIndex: 30,
     width: width < 600 ? "100vw" : "400px",
     transform: selectedCountry ? "translateX(0)" : "translateX(100%)",
+    paddingLeft: width < 600 ? "env(safe-area-inset-left, 0px)" : "0px",
     paddingRight: "env(safe-area-inset-right, 0px)",
     paddingBottom: "env(safe-area-inset-bottom, 0px)",
     backgroundColor: darkMode ? "#121212" : "#f1f5f9",
