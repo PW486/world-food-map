@@ -42,6 +42,9 @@ const App = () => {
   const { width, height } = useWindowSize();
   const isMobile = width < 600;
   const isLandscape = width > height && height < 500;
+  const isTouchDevice = useMemo(() => (
+    (typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0))
+  ), []);
   
   const sidebarWidth = isMobile ? width : 400;
   const baseMargin = "1.5rem";
@@ -274,7 +277,7 @@ const App = () => {
 
   return (
     <div className={`font-sans ${darkMode ? "dark-mode-app" : ""}`} style={{ width: "100%", height: "100dvh", overflow: "hidden", position: "relative", backgroundColor: darkMode ? "#1a1a1a" : "#f0f7ff", touchAction: "none", transition: "background-color 0.3s ease" }}>
-      <MapLayer width={width} height={height} position={position} handleMoveEnd={p => setPosition(p)} handleCountryClick={handleCountryClick} selectedCountry={selectedCountry} setTooltipContent={setTooltipContent} animationMode={animationMode} darkMode={darkMode} onMapClick={() => setIsSearchActive(false)} />
+      <MapLayer width={width} height={height} position={position} handleMoveEnd={p => setPosition(p)} handleCountryClick={handleCountryClick} selectedCountry={selectedCountry} setTooltipContent={setTooltipContent} animationMode={animationMode} darkMode={darkMode} onMapClick={() => setIsSearchActive(false)} isTouchDevice={isTouchDevice} />
       <Header darkMode={darkMode} />
 
       {/* Left Bottom: Search & Random */}
@@ -320,7 +323,7 @@ const App = () => {
         <ZoomControls onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} darkMode={darkMode} />
       </div>
 
-      {!isMobile && tooltipContent && (
+      {!isTouchDevice && !isMobile && tooltipContent && (
         <div className="position-absolute top-0 start-50 translate-middle-x mt-3 px-3 py-1 shadow-sm" style={{ zIndex: 20, backgroundColor: darkMode ? "#333333" : "white", color: darkMode ? "#f0f0f0" : "#333333", fontWeight: "bold", borderRadius: "12px" }}>{tooltipContent}</div>
       )}
       <Sidebar selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} width={width} darkMode={darkMode} />

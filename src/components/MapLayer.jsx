@@ -9,7 +9,7 @@ const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 /**
  * Geography style generator
  */
-const getGeographyStyle = ({ isMobile, isSelected, isHovered, hasData, theme, fillColor }) => {
+const getGeographyStyle = ({ isInteractionDisabled, isSelected, isHovered, hasData, theme, fillColor }) => {
   const baseStyle = {
     outline: "none",
     strokeWidth: 0.5,
@@ -17,7 +17,7 @@ const getGeographyStyle = ({ isMobile, isSelected, isHovered, hasData, theme, fi
     transition: "all 0.3s ease",
   };
 
-  const shouldHighlight = hasData && !isMobile && (isHovered || isSelected);
+  const shouldHighlight = hasData && !isInteractionDisabled && (isHovered || isSelected);
   const filter = shouldHighlight ? "brightness(0.9)" : "none";
 
   return {
@@ -25,7 +25,7 @@ const getGeographyStyle = ({ isMobile, isSelected, isHovered, hasData, theme, fi
     hover: { 
       ...baseStyle, 
       fill: fillColor, 
-      filter: hasData && !isMobile ? "brightness(0.9)" : "none", 
+      filter: hasData && !isInteractionDisabled ? "brightness(0.9)" : "none", 
       stroke: theme.STROKE, 
       opacity: 1, 
       cursor: hasData ? "pointer" : "default" 
@@ -50,10 +50,11 @@ const getLabelVisibilityThreshold = (countryName, isMobile) => {
 
 const MapLayer = ({ 
   width, height, position, handleMoveEnd, handleCountryClick, 
-  selectedCountry, setTooltipContent, animationMode, darkMode, onMapClick 
+  selectedCountry, setTooltipContent, animationMode, darkMode, onMapClick, isTouchDevice
 }) => {
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const isMobile = width < 600;
+  const isInteractionDisabled = isMobile || isTouchDevice;
   const theme = darkMode ? MAP_COLORS.DARK : MAP_COLORS.LIGHT;
 
   const scale = useMemo(() => (width < 600 ? width / 6.5 : 150), [width]);
@@ -113,11 +114,11 @@ const MapLayer = ({
                       <Geography
                         key={geo.rsmKey}
                         geography={geo}
-                        onMouseEnter={() => !isMobile && (setTooltipContent(name), setHoveredCountry(name))}
-                        onMouseLeave={() => !isMobile && (setTooltipContent(""), setHoveredCountry(null))}
+                        onMouseEnter={() => !isInteractionDisabled && (setTooltipContent(name), setHoveredCountry(name))}
+                        onMouseLeave={() => !isInteractionDisabled && (setTooltipContent(""), setHoveredCountry(null))}
                         onClick={() => handleCountryClick(geo, centroids[name])}
                         style={getGeographyStyle({
-                          isMobile, isSelected: selectedCountry === name, 
+                          isInteractionDisabled, isSelected: selectedCountry === name, 
                           isHovered: hoveredCountry === name, hasData, theme, fillColor
                         })}
                       />
@@ -134,7 +135,7 @@ const MapLayer = ({
                     return (
                       <Marker key={`${geo.rsmKey}-label`} coordinates={centroid}>
                         {/* Invisible expanded hit area for easier mobile tapping */}
-                        {isMobile && (
+                        {isInteractionDisabled && (
                           <circle
                             r={labelFontSize * 2.5}
                             fill="transparent"
@@ -158,8 +159,8 @@ const MapLayer = ({
                               textAnchor="middle"
                               dominantBaseline="central"
                               transform={`scale(${textScale})`}
-                              onMouseEnter={() => !isMobile && (setTooltipContent(name), setHoveredCountry(name))}
-                              onMouseLeave={() => !isMobile && (setTooltipContent(""), setHoveredCountry(null))}
+                              onMouseEnter={() => !isInteractionDisabled && (setTooltipContent(name), setHoveredCountry(name))}
+                              onMouseLeave={() => !isInteractionDisabled && (setTooltipContent(""), setHoveredCountry(null))}
                               onClick={(e) => (e.stopPropagation(), handleCountryClick(geo, centroid))}
                               style={{ 
                                 ...labelStyle, 

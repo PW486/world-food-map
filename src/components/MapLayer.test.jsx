@@ -56,7 +56,8 @@ describe('MapLayer', () => {
       setTooltipContent: vi.fn(),
       animationMode: null,
       darkMode: false,
-      onMapClick: vi.fn()
+      onMapClick: vi.fn(),
+      isTouchDevice: false
     };
 
     render(<MapLayer {...props} />);
