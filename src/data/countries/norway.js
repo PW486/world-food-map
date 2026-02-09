@@ -8,5 +8,5 @@ export const norway = [
   { name: "Finnbiff", desc: "A traditional Sami dish of sautéed reindeer meat served with mushrooms and lingonberry sauce." },
   { name: "Reker", desc: "Fresh cold-water shrimp, often eaten simply on white bread with mayonnaise, lemon, and dill." },
   { name: "Raspeballer", desc: "Dense potato dumplings often served with salted meat, sausages, and melted butter." },
-  { name: "Skillingsboller", desc: "Traditional Norwegian cinnamon buns, especially famous in Bergen, topped with plenty of sugar." }
+  { name: "Skillingsbolle", desc: "Traditional Norwegian cinnamon bun, especially famous in Bergen, topped with plenty of sugar." }
 ];
