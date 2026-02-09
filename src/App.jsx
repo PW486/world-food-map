@@ -243,8 +243,17 @@ const App = () => {
       targetZoom = Math.max(baseMinZoom + 3.0, 5.0);
     }
 
+    // Calculate shift to center country in the visible area (excluding sidebar)
+    let targetCoordinates = centroid;
+    if (!isMobile) {
+      const baseScale = 150;
+      const pixelOffset = sidebarWidth / 2;
+      const shiftLon = (pixelOffset / (baseScale * targetZoom)) * (180 / Math.PI);
+      targetCoordinates = [centroid[0] + shiftLon, centroid[1]];
+    }
+
     setAnimationMode("slow");
-    setPosition(pos => ({ coordinates: centroid, zoom: forceZoom ? targetZoom : Math.max(pos.zoom, targetZoom) }));
+    setPosition(pos => ({ coordinates: targetCoordinates, zoom: forceZoom ? targetZoom : Math.max(pos.zoom, targetZoom) }));
     setTimeout(() => setAnimationMode(null), 500);
   };
 
