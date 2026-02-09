@@ -2,7 +2,7 @@ export const sweden = [
   { name: "Köttbullar (Meatballs)", desc: "Meatballs served with creamy gravy, mashed potatoes, and lingonberry jam." },
   { name: "Gravlax", desc: "Raw salmon cured in salt, sugar, and dill." },
   { name: "Kanelbullar", desc: "Spiced cinnamon buns sprinkled with pearl sugar." },
-  { name: "Surströmming", desc: "Infamous fermented herring with a very potent smell." },
+  { name: "Toast Skagen", desc: "Sautéed bread topped with a mixture of prawns, mayonnaise, dill, and lemon." },
   { name: "Smörgåstårta", desc: "Savory sandwich cake layered with fillings like eggs, shrimp, and mayo." },
   { name: "Sill (Pickled Herring)", desc: "Herring preserved in various marinades (mustard, onion, dill)." },
   { name: "Knäckebröd", desc: "Dry, crisp rye bread that has been a staple for centuries." },
