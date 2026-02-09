@@ -313,7 +313,7 @@ const App = () => {
           zIndex: 10, 
           right: `calc(${baseMargin} + env(safe-area-inset-right, 0px))`,
           bottom: `calc(${isLandscape ? "0.75rem" : baseMargin} + env(safe-area-inset-bottom, 0px))`,
-          transform: (!isMobile && selectedCountry) ? `translateX(calc(-${sidebarWidth}px + env(safe-area-inset-right, 0px) + 0.25rem))` : "translateX(0)" 
+          transform: (!isMobile && selectedCountry) ? `translateX(calc(-${sidebarWidth}px + env(safe-area-inset-right, 0px)))` : "translateX(0)" 
         }}
       >
         <button onClick={() => setDarkMode(!darkMode)} className="btn shadow-sm d-flex align-items-center justify-content-center" style={{ width: "50px", height: "50px", borderRadius: "15px", backgroundColor: darkMode ? "#333333" : "white", color: darkMode ? "#FFD93D" : "#3b82f6", border: "none" }}>{darkMode ? <Sun size={24} /> : <Moon size={24} />}</button>
